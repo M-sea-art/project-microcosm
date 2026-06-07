@@ -14,7 +14,7 @@ def run(args, cwd=None):
     proc = subprocess.run([sys.executable, str(SCRIPT), *args],
                           cwd=cwd or str(ROOT), text=True,
                           stdout=subprocess.PIPE, stderr=subprocess.PIPE,
-                          env={**ENV, **dict(__import__("os").environ)})
+                          env={**__import__("os").environ, **ENV, "PYTHONHASHSEED": "random", "PYTHONIOENCODING": "utf-8"})
     return proc
 
 

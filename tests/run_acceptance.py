@@ -26,7 +26,7 @@ def run_case(name, category, severity):
         text=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE,
-        env={**dict(), **{"PYTHONPATH": str(ROOT / "scripts")}},
+        env={**dict(__import__("os").environ), "PYTHONPATH": str(ROOT / "scripts"), "PYTHONHASHSEED": "random", "PYTHONIOENCODING": "utf-8"},
     )
     if proc.returncode != 0:
         raise AssertionError(f"{name} failed: {proc.stderr}")
