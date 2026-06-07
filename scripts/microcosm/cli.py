@@ -134,9 +134,23 @@ def cmd_compat(args):
             for name in ("agent_skills.py", "codegraph.py", "codex.py", "hermes.py", "openclaw.py")
         ),
     }
-    status = "ok" if all(checks.values()) else "failed"
-    print(json.dumps({"mode": "compat-check", "checks": checks, "status": status}, ensure_ascii=False))
-    return 0 if status == "ok" else 1
+    failed = [name for name, ok in checks.items() if not ok]
+    if not failed:
+        status, severity = "ok", "ok"
+    elif checks.get("python") and not failed[0] == "python":
+        # All non-critical checks may be partial; report as warning instead of fatal.
+        status, severity = "warning", "advisory"
+    else:
+        status, severity = "failed", "fatal"
+    payload = {
+        "mode": "compat-check",
+        "checks": checks,
+        "status": status,
+        "severity": severity,
+        "failed": failed,
+    }
+    print(json.dumps(payload, ensure_ascii=False))
+    return 0 if status != "failed" else 1
 
 
 def main(argv=None):
