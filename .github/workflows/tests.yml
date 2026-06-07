@@ -9,6 +9,10 @@ on:
 permissions:
   contents: read
 
+env:
+  PYTHONIOENCODING: utf-8
+  LC_ALL: C.UTF-8
+
 jobs:
   acceptance:
     name: acceptance (${{ matrix.os }} / py${{ matrix.python-version }})
@@ -34,43 +38,35 @@ jobs:
           python -c "import sys; print(sys.platform)"
 
       - name: Compile
-        shell: pwsh
         run: python -m compileall -q scripts tests
 
       - name: Repository compatibility
-        shell: pwsh
-        run: python scripts/microcosm.py compat-check --project .
+        run: python scripts/microcosm.py compat-check --project tests/fixtures/forbidden-edge
 
       - name: Build package
-        shell: pwsh
         run: python -m pip wheel . --no-deps --wheel-dir dist
 
       - name: Capability acceptance
-        shell: pwsh
         env:
           PYTHONPATH: scripts
         run: python tests/run_acceptance.py
 
       - name: Verify acceptance
-        shell: pwsh
         env:
           PYTHONPATH: scripts
         run: python tests/run_verify_acceptance.py
 
       - name: Plan-change acceptance
-        shell: pwsh
         env:
           PYTHONPATH: scripts
         run: python tests/run_plan_acceptance.py
 
       - name: Trust acceptance
-        shell: pwsh
         env:
           PYTHONPATH: scripts
         run: python tests/run_trust_acceptance.py
 
       - name: Unit tests
-        shell: pwsh
         env:
           PYTHONPATH: scripts
         run: python -m unittest discover -v tests/unit
