@@ -1,0 +1,9 @@
+{
+  "invariants": [
+    {
+      "operator": "single-writer",
+      "target": "store.state",
+      "allowed_writers": ["service.primary"]
+    }
+  ]
+}

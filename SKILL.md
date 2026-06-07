@@ -1,0 +1,72 @@
+---
+name: project-microcosm
+description: Use this when analyzing a software or agent project's architecture, topology, permissions, ownership, dependencies, state evolution, pre-change impact, post-change verification, agent-tool-memory boundaries, permission changes, major refactors, repeated failures, or cyclic dependencies. Do not use for trivial text edits, isolated code explanation, single-variable renames, comment tweaks, or formatting one JSON file.
+---
+
+# Project Microcosm
+
+Model a project horizontally as structural topology and vertically as state evolution. Treat this skill as an advisory engineering cognition layer for generative engineering agents, not as a code writer or commit blocker.
+
+## Operating principles
+
+- Observe before changing.
+- Never treat current structure as intended structure.
+- Keep Observations, Assertions, Policies, Evidence, and Findings separate.
+- Mark inferred facts as inferred; never upgrade heuristics into verified facts without evidence.
+- Default to advisory mode. Do not modify project source code.
+- Use the minimum useful graph resolution: L0/L1 by default, L2 when inspecting modules, L3 only for local fault isolation.
+- Every Finding must carry evidence references and a confidence level.
+- Report unavailable or unsupported analysis explicitly.
+
+## Required references
+
+Read `references/workflow.md` before running a mode. Use these references as needed: `references/mir-model.md`, `references/geometry-engine.md`, `references/temporal-engine.md`, `references/evidence-policy.md`, `references/security-policy.md`, `references/platform-compatibility.md`, and `references/migration-policy.md`.
+
+## Select a mode
+
+- `bootstrap`: first run in a project. Discover Observed / Inferred / Proposed structure and create `.microcosm/` drafts.
+- `inspect`: static structure check against accepted assertions, policies, and invariants.
+- `plan-change`: pre-change structural rehearsal from `change-plan.yaml`; V0.1 is limited.
+- `verify`: post-change rescan and compare against a previous run.
+- `simulate`: temporal placeholder only in V0.1.
+- `compat-check`: check skill/platform packaging compatibility.
+
+## Procedure
+
+1. Locate the project root from the user path or current workspace.
+2. Refuse to scan known secret paths and do not execute repository code.
+3. Read `.microcosm/` configuration when present.
+4. Validate schema versions before consuming prior MIR or snapshots.
+5. Detect available adapters: generic repository, Python AST, Node imports, agent skills, MCP config, platform adapters.
+6. Build deterministic Observations from scanners.
+7. Keep Inferred entities separate from Observed entities; include rule id and confidence.
+8. Load accepted Target Assertions, Policies, and Invariants.
+9. Run applicable geometry invariants.
+10. Generate one Finding set, then render both `findings.json` and `summary.md` from it.
+11. Report unresolved uncertainties and unsupported analysis.
+
+## CLI
+
+The bundled CLI entry point is `scripts/microcosm.py`:
+
+```powershell
+python <skill-root>\scripts\microcosm.py bootstrap --project <repo>
+python <skill-root>\scripts\microcosm.py inspect --project <repo>
+python <skill-root>\scripts\microcosm.py verify --project <repo> --against run-0001
+python <skill-root>\scripts\microcosm.py simulate --project <repo>
+python <skill-root>\scripts\microcosm.py compat-check --project <repo>
+```
+
+## Output contract
+
+Always include analyzed scope, active adapters, model resolution, observed structure, inferred structure and confidence, target differences, invariant violations, evidence levels, unresolved uncertainties, and recommended next action.
+
+Machine output is `.microcosm/reports/<run-id>/findings.json`; human output is `.microcosm/reports/<run-id>/summary.md`. Both must derive from the same Finding objects.
+
+## Safety
+
+Do not read known secret files. Do not execute repository code. Do not write outside `.microcosm/`. Do not request broader permissions automatically. If a region is unavailable, report it and lower confidence rather than bypassing boundaries.
+
+## V0.1 limits
+
+V0.1 implements the geometry kernel first: MIR basics, bootstrap, static scan, six invariants, reports, schema versioning, and compatibility checks. Temporal simulation, runtime traces, CodeGraph deep integration, CI enforcement, and automatic repair are explicitly unavailable unless a later version says so.

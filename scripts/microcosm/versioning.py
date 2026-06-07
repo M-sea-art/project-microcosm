@@ -1,0 +1,3 @@
+MICROCOSM_VERSION = "0.1.0-beta.1"
+SCHEMA_VERSION = "mir/v0.1"
+GENERATOR_VERSION = "kernel/v0.1.0-beta.1"

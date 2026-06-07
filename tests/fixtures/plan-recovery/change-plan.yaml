@@ -1,0 +1,9 @@
+change:
+  id: change.remove-forbidden
+  description: Remove the forbidden direct write from executor to long-term memory.
+  actions:
+    - kind: remove_edge
+      match:
+        from: agent.executor
+        to: memory.long-term
+        relation: writes

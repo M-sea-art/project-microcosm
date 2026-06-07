@@ -1,0 +1,5 @@
+{
+  "invariants": [
+    {"operator": "forbidden-edge", "match": {"from": "agent.executor", "to": "memory.long-term", "relation": "writes"}}
+  ]
+}

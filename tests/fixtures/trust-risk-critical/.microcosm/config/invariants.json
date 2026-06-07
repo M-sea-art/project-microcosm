@@ -1,0 +1,6 @@
+{
+  "invariants": [
+    {"operator": "forbidden-edge", "match": {"from": "agent.executor", "to": "memory.long-term", "relation": "writes"}},
+    {"operator": "single-writer", "target": "store.state", "allowed_writers": ["service.primary"]}
+  ]
+}

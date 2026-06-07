@@ -1,0 +1,12 @@
+change:
+  id: change.add-c-d
+  description: Add a new acyclic import edge; invariants should not change.
+  actions:
+    - kind: add_edge
+      edge:
+        id: edge.c-d
+        from: module.c
+        to: module.d
+        relation: imports
+        attributes: {}
+        evidence_refs: ["evidence.plan.c-d"]

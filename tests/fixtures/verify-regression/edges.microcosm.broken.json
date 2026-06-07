@@ -1,0 +1,18 @@
+[
+  {
+    "id": "edge.primary-state",
+    "from": "service.primary",
+    "to": "store.state",
+    "relation": "writes",
+    "attributes": {},
+    "evidence_refs": ["evidence.fixture.primary"]
+  },
+  {
+    "id": "edge.secondary-state",
+    "from": "service.secondary",
+    "to": "store.state",
+    "relation": "writes",
+    "attributes": {},
+    "evidence_refs": ["evidence.fixture.secondary"]
+  }
+]

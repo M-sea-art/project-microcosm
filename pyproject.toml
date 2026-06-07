@@ -1,0 +1,55 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "project-microcosm"
+version = "0.1.0b1"
+description = "Advisory structural cognition kernel for agentic software engineering."
+readme = "docs/README.md"
+requires-python = ">=3.10"
+license = "Apache-2.0"
+authors = [
+  { name = "Project Microcosm Contributors" }
+]
+keywords = [
+  "agentic-engineering",
+  "architecture",
+  "static-analysis",
+  "code-intelligence",
+  "governance",
+  "mir",
+  "software-architecture",
+  "ai-agents"
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Libraries :: Python Modules"
+]
+
+[project.scripts]
+microcosm = "microcosm.cli:main"
+
+[project.urls]
+Homepage = "https://github.com/M-sea-art/project-microcosm"
+Issues = "https://github.com/M-sea-art/project-microcosm/issues"
+Changelog = "https://github.com/M-sea-art/project-microcosm/blob/main/docs/CHANGELOG.md"
+
+[tool.setuptools]
+package-dir = { "" = "scripts" }
+
+[tool.setuptools.packages.find]
+where = ["scripts"]
+
+[tool.setuptools.data-files]
+"share/project-microcosm" = ["SKILL.md"]
+"share/project-microcosm/references" = ["references/*.md"]
+"share/project-microcosm/schemas" = ["schemas/*.json"]
+"share/project-microcosm/templates" = ["templates/*.yaml", "templates/*.yml"]

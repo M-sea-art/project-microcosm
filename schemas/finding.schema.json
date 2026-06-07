@@ -1,0 +1,83 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "finding",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "category": {
+      "type": "string",
+      "enum": [
+        "architecture-drift",
+        "undeclared-edge",
+        "missing-required-path",
+        "authority-violation",
+        "multiple-writers",
+        "cyclic-dependency",
+        "excessive-fanout",
+        "unverified-inference",
+        "schema-mismatch",
+        "adapter-failure",
+        "evidence-missing"
+      ]
+    },
+    "severity": {
+      "type": "string",
+      "enum": [
+        "critical",
+        "high",
+        "medium",
+        "low",
+        "info"
+      ]
+    },
+    "band": {
+      "type": "string",
+      "enum": [
+        "confirmed",
+        "probable",
+        "concern",
+        "hypothesis"
+      ]
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "subject_ref": {
+      "type": "string",
+      "minLength": 1
+    },
+    "expected": {
+      "type": "object"
+    },
+    "actual": {
+      "type": "object"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "message": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "id",
+    "category",
+    "severity",
+    "band",
+    "confidence",
+    "subject_ref",
+    "expected",
+    "actual",
+    "evidence_refs",
+    "message"
+  ]
+}

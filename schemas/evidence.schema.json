@@ -1,0 +1,45 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "evidence",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "minLength": 1
+    },
+    "level": {
+      "type": "string",
+      "enum": [
+        "E4",
+        "E3",
+        "E2",
+        "E1",
+        "E0"
+      ]
+    },
+    "source": {
+      "type": "object"
+    },
+    "collector": {
+      "type": "object"
+    },
+    "confidence": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "level",
+    "source",
+    "collector",
+    "confidence"
+  ]
+}

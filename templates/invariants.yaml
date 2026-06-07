@@ -1,0 +1,3 @@
+invariants:
+  - operator: no-cycle
+    relation: [imports, depends-on]

@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "report-manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "microcosm_version": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "PASS",
+        "WARN",
+        "FAIL",
+        "UNAVAILABLE"
+      ]
+    },
+    "files": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "microcosm_version",
+    "schema_version",
+    "generator_version",
+    "run_id",
+    "decision",
+    "files"
+  ]
+}

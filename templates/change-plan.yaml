@@ -1,0 +1,12 @@
+change:
+  id: change.example
+  description: Describe intended structural change.
+  actions:
+    - kind: add_edge
+      edge:
+        id: edge.example
+        from: agent.proposer
+        to: service.example
+        relation: calls
+        attributes: {}
+        evidence_refs: []

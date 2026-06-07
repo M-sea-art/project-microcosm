@@ -1,0 +1,3 @@
+[
+  {"id":"edge.executor-memory","from":"agent.executor","to":"memory.long-term","relation":"writes","attributes":{},"evidence_refs":["evidence.fixture.executor-memory"]}
+]

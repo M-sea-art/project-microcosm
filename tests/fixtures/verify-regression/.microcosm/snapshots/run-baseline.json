@@ -1,0 +1,32 @@
+{
+  "meta": {
+    "microcosm_version": "0.1.0-beta.1",
+    "schema_version": "mir/v0.1",
+    "run_id": "run-baseline",
+    "generated_at": "2026-06-07T10:00:00Z",
+    "generator_version": "kernel/v0.1.0"
+  },
+  "project": {
+    "id": "project.verify-regression",
+    "name": "verify-regression",
+    "root": "."
+  },
+  "nodes": [],
+  "edges": [
+    {
+      "id": "edge.primary-state",
+      "from": "service.primary",
+      "to": "store.state",
+      "relation": "writes",
+      "attributes": {},
+      "evidence_refs": [
+        "evidence.fixture.primary"
+      ]
+    }
+  ],
+  "assertions": [],
+  "observations": [],
+  "policies": [],
+  "evidence": [],
+  "findings": []
+}

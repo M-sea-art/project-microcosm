@@ -1,0 +1,10 @@
+[
+  {
+    "id": "edge.primary-state",
+    "from": "service.primary",
+    "to": "store.state",
+    "relation": "writes",
+    "attributes": {},
+    "evidence_refs": ["evidence.fixture.primary"]
+  }
+]

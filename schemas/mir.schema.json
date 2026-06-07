@@ -1,0 +1,440 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "mir",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "meta": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "microcosm_version": {
+          "type": "string"
+        },
+        "schema_version": {
+          "type": "string"
+        },
+        "run_id": {
+          "type": "string"
+        },
+        "generated_at": {
+          "type": "string"
+        },
+        "generator_version": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "microcosm_version",
+        "schema_version",
+        "run_id",
+        "generated_at",
+        "generator_version"
+      ]
+    },
+    "project": {
+      "type": "object"
+    },
+    "nodes": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "node",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "enum": [
+              "project",
+              "package",
+              "module",
+              "symbol",
+              "service",
+              "agent",
+              "skill",
+              "tool",
+              "mcp-server",
+              "workflow",
+              "memory",
+              "store",
+              "policy",
+              "queue",
+              "external-service",
+              "human-gate",
+              "resource"
+            ]
+          },
+          "name": {
+            "type": "string",
+            "minLength": 1
+          },
+          "attributes": {
+            "type": "object"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "name",
+          "attributes",
+          "evidence_refs"
+        ]
+      }
+    },
+    "edges": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "edge",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "from": {
+            "type": "string",
+            "minLength": 1
+          },
+          "to": {
+            "type": "string",
+            "minLength": 1
+          },
+          "relation": {
+            "type": "string",
+            "enum": [
+              "contains",
+              "imports",
+              "calls",
+              "reads",
+              "writes",
+              "delegates",
+              "submits-to",
+              "validates",
+              "approves",
+              "activates",
+              "inhibits",
+              "observes",
+              "publishes",
+              "subscribes",
+              "owns",
+              "depends-on",
+              "transitions-to"
+            ]
+          },
+          "attributes": {
+            "type": "object"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "from",
+          "to",
+          "relation",
+          "attributes",
+          "evidence_refs"
+        ]
+      }
+    },
+    "assertions": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "assertion",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layer": {
+            "type": "string",
+            "enum": [
+              "target",
+              "authority",
+              "architecture",
+              "ownership"
+            ]
+          },
+          "subject_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "layer",
+          "subject_ref",
+          "status",
+          "evidence_refs"
+        ]
+      }
+    },
+    "observations": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "observation",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "layer": {
+            "type": "string",
+            "enum": [
+              "static",
+              "runtime",
+              "configuration",
+              "test"
+            ]
+          },
+          "subject_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "status": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "layer",
+          "subject_ref",
+          "status",
+          "evidence_refs"
+        ]
+      }
+    },
+    "policies": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "policy",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "subject_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "decision": {
+            "type": "string",
+            "enum": [
+              "allowed",
+              "denied",
+              "approval-required",
+              "unspecified"
+            ]
+          },
+          "authority": {
+            "type": "string"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "minItems": 1
+          }
+        },
+        "required": [
+          "id",
+          "subject_ref",
+          "decision",
+          "authority",
+          "evidence_refs"
+        ]
+      }
+    },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "evidence",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "kind": {
+            "type": "string",
+            "minLength": 1
+          },
+          "level": {
+            "type": "string",
+            "enum": [
+              "E4",
+              "E3",
+              "E2",
+              "E1",
+              "E0"
+            ]
+          },
+          "source": {
+            "type": "object"
+          },
+          "collector": {
+            "type": "object"
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          }
+        },
+        "required": [
+          "id",
+          "kind",
+          "level",
+          "source",
+          "collector",
+          "confidence"
+        ]
+      }
+    },
+    "findings": {
+      "type": "array",
+      "items": {
+        "$schema": "https://json-schema.org/draft/2020-12/schema",
+        "title": "finding",
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "architecture-drift",
+              "undeclared-edge",
+              "missing-required-path",
+              "authority-violation",
+              "multiple-writers",
+              "cyclic-dependency",
+              "excessive-fanout",
+              "unverified-inference",
+              "schema-mismatch",
+              "adapter-failure",
+              "evidence-missing"
+            ]
+          },
+          "severity": {
+            "type": "string",
+            "enum": [
+              "critical",
+              "high",
+              "medium",
+              "low",
+              "info"
+            ]
+          },
+          "band": {
+            "type": "string",
+            "enum": [
+              "confirmed",
+              "probable",
+              "concern",
+              "hypothesis"
+            ]
+          },
+          "confidence": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 1
+          },
+          "subject_ref": {
+            "type": "string",
+            "minLength": 1
+          },
+          "expected": {
+            "type": "object"
+          },
+          "actual": {
+            "type": "object"
+          },
+          "evidence_refs": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "message": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "id",
+          "category",
+          "severity",
+          "band",
+          "confidence",
+          "subject_ref",
+          "expected",
+          "actual",
+          "evidence_refs",
+          "message"
+        ]
+      }
+    }
+  },
+  "required": [
+    "meta",
+    "project",
+    "nodes",
+    "edges",
+    "assertions",
+    "observations",
+    "policies",
+    "evidence",
+    "findings"
+  ]
+}

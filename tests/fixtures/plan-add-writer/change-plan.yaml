@@ -1,0 +1,12 @@
+change:
+  id: change.add-secondary-writer
+  description: Add a secondary writer to store.state (will violate single-writer).
+  actions:
+    - kind: add_edge
+      edge:
+        id: edge.secondary-state
+        from: service.secondary
+        to: store.state
+        relation: writes
+        attributes: {}
+        evidence_refs: ["evidence.plan.secondary"]

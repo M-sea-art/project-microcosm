@@ -1,0 +1,60 @@
+{
+  "meta": {
+    "microcosm_version": "0.1.0-beta.1",
+    "schema_version": "mir/v0.1",
+    "run_id": "run-baseline",
+    "generated_at": "2026-06-07T10:00:00Z",
+    "generator_version": "kernel/v0.1.0"
+  },
+  "project": {
+    "id": "project.verify-recovery",
+    "name": "verify-recovery",
+    "root": "."
+  },
+  "nodes": [],
+  "edges": [
+    {
+      "id": "edge.executor-memory",
+      "from": "agent.executor",
+      "to": "memory.long-term",
+      "relation": "writes",
+      "attributes": {},
+      "evidence_refs": [
+        "evidence.fixture.executor-memory"
+      ]
+    }
+  ],
+  "assertions": [],
+  "observations": [],
+  "policies": [],
+  "evidence": [],
+  "findings": [
+    {
+      "id": "finding.authority-violation.613bdb38",
+      "category": "authority-violation",
+      "severity": "critical",
+      "confidence": 0.96,
+      "subject_ref": "edge.executor-memory",
+      "expected": {
+        "forbidden_edge": {
+          "from": "agent.executor",
+          "to": "memory.long-term",
+          "relation": "writes"
+        }
+      },
+      "actual": {
+        "observed_edge": {
+          "id": "edge.executor-memory",
+          "from": "agent.executor",
+          "to": "memory.long-term",
+          "relation": "writes"
+        }
+      },
+      "evidence_refs": [
+        "evidence.fixture.executor-memory"
+      ],
+      "band": "confirmed",
+      "message": "authority-violation on edge.executor-memory"
+    }
+  ]
+}

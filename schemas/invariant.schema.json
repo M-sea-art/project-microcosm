@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "invariant",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "operator": {
+      "type": "string"
+    }
+  },
+  "required": [
+    "operator"
+  ]
+}

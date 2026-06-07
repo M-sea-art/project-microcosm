@@ -1,0 +1,60 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "edge",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "from": {
+      "type": "string",
+      "minLength": 1
+    },
+    "to": {
+      "type": "string",
+      "minLength": 1
+    },
+    "relation": {
+      "type": "string",
+      "enum": [
+        "contains",
+        "imports",
+        "calls",
+        "reads",
+        "writes",
+        "delegates",
+        "submits-to",
+        "validates",
+        "approves",
+        "activates",
+        "inhibits",
+        "observes",
+        "publishes",
+        "subscribes",
+        "owns",
+        "depends-on",
+        "transitions-to"
+      ]
+    },
+    "attributes": {
+      "type": "object"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "id",
+    "from",
+    "to",
+    "relation",
+    "attributes",
+    "evidence_refs"
+  ]
+}

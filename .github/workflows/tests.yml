@@ -1,0 +1,76 @@
+name: tests
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master, develop]
+
+permissions:
+  contents: read
+
+jobs:
+  acceptance:
+    name: acceptance (${{ matrix.os }} / py${{ matrix.python-version }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, ubuntu-latest]
+        python-version: ["3.10", "3.11", "3.12"]
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Show environment
+        run: |
+          python --version
+          python -c "import sys; print(sys.platform)"
+
+      - name: Compile
+        shell: pwsh
+        run: python -m compileall -q scripts tests
+
+      - name: Repository compatibility
+        shell: pwsh
+        run: python scripts/microcosm.py compat-check --project .
+
+      - name: Build package
+        shell: pwsh
+        run: python -m pip wheel . --no-deps --wheel-dir dist
+
+      - name: Capability acceptance
+        shell: pwsh
+        env:
+          PYTHONPATH: scripts
+        run: python tests/run_acceptance.py
+
+      - name: Verify acceptance
+        shell: pwsh
+        env:
+          PYTHONPATH: scripts
+        run: python tests/run_verify_acceptance.py
+
+      - name: Plan-change acceptance
+        shell: pwsh
+        env:
+          PYTHONPATH: scripts
+        run: python tests/run_plan_acceptance.py
+
+      - name: Trust acceptance
+        shell: pwsh
+        env:
+          PYTHONPATH: scripts
+        run: python tests/run_trust_acceptance.py
+
+      - name: Unit tests
+        shell: pwsh
+        env:
+          PYTHONPATH: scripts
+        run: python -m unittest discover -v tests/unit

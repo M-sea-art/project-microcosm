@@ -1,0 +1,10 @@
+[
+  {
+    "id": "edge.a-b",
+    "from": "module.a",
+    "to": "module.b",
+    "relation": "imports",
+    "attributes": {},
+    "evidence_refs": ["evidence.fixture.a-b"]
+  }
+]

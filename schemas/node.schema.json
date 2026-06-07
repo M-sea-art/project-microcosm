@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "node",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "id": {
+      "type": "string",
+      "minLength": 1
+    },
+    "kind": {
+      "type": "string",
+      "enum": [
+        "project",
+        "package",
+        "module",
+        "symbol",
+        "service",
+        "agent",
+        "skill",
+        "tool",
+        "mcp-server",
+        "workflow",
+        "memory",
+        "store",
+        "policy",
+        "queue",
+        "external-service",
+        "human-gate",
+        "resource"
+      ]
+    },
+    "name": {
+      "type": "string",
+      "minLength": 1
+    },
+    "attributes": {
+      "type": "object"
+    },
+    "evidence_refs": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "minItems": 1
+    }
+  },
+  "required": [
+    "id",
+    "kind",
+    "name",
+    "attributes",
+    "evidence_refs"
+  ]
+}
