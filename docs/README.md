@@ -110,6 +110,7 @@ Every run writes under `<project>/.microcosm/reports/<run-id>/`:
 | `findings.json`       | Agents   | Stable finding ids, category, severity, evidence_refs. |
 | `validation.json`     | Humans + Agents | MIR validator issues + schema-mismatch findings. |
 | `queue-eligibility.json` | Agents | Confirmed / probable / concern / hypothesis / schema_mismatch buckets. |
+| `next-actions.json`   | Agents   | Prioritized next actions with owner expert and recommended mode. |
 | `unresolved.json`     | Humans   | Known unanalyzable regions.            |
 | `geometry-diff.json`  | Agents   | Pre/post node + edge + finding diff (verify only). |
 | `manifest.json`       | Both     | Decision, file list, versions.         |
@@ -160,13 +161,15 @@ Beyond geometric checks, the trust layer enforces:
 - Acceptance fixtures (capability, verify, plan-change, trust).
 - Stable finding ids and post-change diff.
 - Schema versioning with strict enums.
+- Machine-readable next actions for agent handoff.
+- Basic Agent Skills and MCP config adapters.
 
 ### Explicitly Not Implemented Yet
 
 - Temporal engine (`simulate` is a placeholder).
 - Runtime trace ingestion and E4 evidence.
-- Deep adapter coverage (Agent Skills, MCP, Codex, HMS, OpenClaw are
-  stubs).
+- Deep adapter coverage (Codex, HMS, OpenClaw, and CodeGraph are
+  stubs; Agent Skills and MCP config support is intentionally shallow).
 - CI enforcement or commit blocking.
 - Automatic repair.
 - CodeGraph deep integration.
@@ -212,6 +215,7 @@ project-microcosm/
 │   ├── README.md
 │   ├── CHANGELOG.md
 │   ├── CONTRIBUTING.md
+│   ├── EXPERTS.md
 │   └── SECURITY.md
 │
 ├── references/                  # Engineering references for the skill

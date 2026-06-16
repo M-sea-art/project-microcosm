@@ -5,6 +5,22 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with the pre-release tag conventions described below.
 
+## [Unreleased]
+
+### Added
+
+- Root `README.md` for GitHub and agent discoverability.
+- `docs/EXPERTS.md` with practical expert ownership areas.
+- GitHub `CODEOWNERS`, pull request template, and issue templates.
+- `next-actions.json` report output and `manifest.json.next_actions`
+  for machine-readable agent handoff.
+- Basic read-only `agent-skills` and `mcp-config` adapters.
+
+### Changed
+
+- GitHub Actions now runs `compat-check` against the repository root
+  and uploads its JSON output as a workflow artifact.
+
 ## [0.1.0-beta.1] - 2026-06-07
 
 First public beta. Project Microcosm enters GitHub as an advisory,

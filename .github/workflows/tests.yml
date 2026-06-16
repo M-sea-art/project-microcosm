@@ -41,7 +41,14 @@ jobs:
         run: python -m compileall -q scripts tests
 
       - name: Repository compatibility
-        run: python scripts/microcosm.py compat-check --project tests/fixtures/forbidden-edge || true
+        run: python scripts/microcosm.py compat-check --project . > compat-check.json
+
+      - name: Upload compatibility report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compat-check-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: compat-check.json
 
       - name: Build package
         run: python -m pip wheel . --no-deps --wheel-dir dist

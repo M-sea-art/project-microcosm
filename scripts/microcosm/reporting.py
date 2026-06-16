@@ -76,6 +76,67 @@ def compute_queue_eligibility(findings):
     }
 
 
+EXPERT_BY_CATEGORY = {
+    "architecture-drift": "agent-runtime-architect",
+    "undeclared-edge": "adapter-integration-expert",
+    "missing-required-path": "geometry-invariant-expert",
+    "authority-violation": "safety-permissions-expert",
+    "multiple-writers": "geometry-invariant-expert",
+    "cyclic-dependency": "geometry-invariant-expert",
+    "excessive-fanout": "geometry-invariant-expert",
+    "unverified-inference": "agent-runtime-architect",
+    "schema-mismatch": "mir-evidence-schema-expert",
+    "adapter-failure": "adapter-integration-expert",
+    "evidence-missing": "mir-evidence-schema-expert",
+}
+
+
+def _priority_for_severity(severity):
+    return {
+        "critical": "P0",
+        "high": "P1",
+        "medium": "P2",
+        "low": "P3",
+        "info": "P4",
+    }.get(severity, "P3")
+
+
+def _mode_for_category(category):
+    if category in {"architecture-drift", "authority-violation", "multiple-writers", "cyclic-dependency"}:
+        return "plan-change"
+    if category == "schema-mismatch":
+        return "compat-check"
+    return "inspect"
+
+
+def compute_next_actions(findings, validation_delta, decision):
+    actions = []
+    for finding in findings + validation_delta:
+        finding_id = finding.get("id")
+        category = finding.get("category", "unverified-inference")
+        severity = finding.get("severity", "low")
+        actions.append({
+            "id": "action." + str(finding_id or category).replace("finding.", ""),
+            "priority": _priority_for_severity(severity),
+            "owner_expert": EXPERT_BY_CATEGORY.get(category, "agent-runtime-architect"),
+            "finding_refs": [finding_id] if finding_id else [],
+            "recommended_mode": _mode_for_category(category),
+            "requires_human_approval": severity in {"critical", "high"} or decision == "FAIL",
+            "summary": finding.get("message") or category,
+        })
+    if not actions and decision == "PASS":
+        actions.append({
+            "id": "action.normal-review",
+            "priority": "P4",
+            "owner_expert": "developer-experience-expert",
+            "finding_refs": [],
+            "recommended_mode": "inspect",
+            "requires_human_approval": False,
+            "summary": "No critical/high findings detected; continue normal review.",
+        })
+    return sorted(actions, key=lambda item: item["priority"])
+
+
 def write_reports(project_root, run_id, mir, active_adapters, inferred=None, proposed=None, unresolved=None, verify_diff=None, base_unresolved=None, validation_payload=None, decision_override=None, risk=None):
     base = Path(project_root) / ".microcosm"
     report_dir = base / "reports" / run_id
@@ -93,6 +154,7 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
     geometry_diff_only = (verify_diff or {}).get("geometry", {})
     risk = risk or compute_risk(findings, geometry_diff_only)
     decision = decision_override or compute_decision(findings + validation_delta, validation_delta, active_adapters)
+    next_actions = compute_next_actions(findings, validation_delta, decision)
 
     (report_dir / "findings.json").write_text(json.dumps({
         "microcosm_version": MICROCOSM_VERSION,
@@ -121,6 +183,15 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
             "decision": decision,
             "diff": verify_diff,
         }, indent=2, ensure_ascii=False), encoding="utf-8")
+
+    (report_dir / "next-actions.json").write_text(json.dumps({
+        "microcosm_version": MICROCOSM_VERSION,
+        "schema_version": SCHEMA_VERSION,
+        "generator_version": GENERATOR_VERSION,
+        "run_id": run_id,
+        "decision": decision,
+        "next_actions": next_actions,
+    }, indent=2, ensure_ascii=False), encoding="utf-8")
 
     unresolved_list = list(unresolved) if unresolved is not None else list(DEFAULT_UNRESOLVED)
     base_unresolved_list = list(base_unresolved or DEFAULT_UNRESOLVED)
@@ -236,9 +307,11 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
     else:
         lines.append("No critical/high findings detected. Safe to proceed with normal review.")
 
+    lines += ["", "## Machine-readable next actions", "See `next-actions.json`."]
+
     (report_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    manifest_files = ["summary.md", "findings.json", "queue-eligibility.json", "unresolved.json"]
+    manifest_files = ["summary.md", "findings.json", "queue-eligibility.json", "next-actions.json", "unresolved.json"]
     if verify_diff is not None:
         manifest_files.insert(2, "geometry-diff.json")
     (report_dir / "manifest.json").write_text(json.dumps({
@@ -247,6 +320,7 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "generator_version": GENERATOR_VERSION,
         "run_id": run_id,
         "decision": decision,
+        "next_actions": next_actions,
         "files": manifest_files,
     }, indent=2), encoding="utf-8")
     return report_dir

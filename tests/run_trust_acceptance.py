@@ -62,6 +62,9 @@ def case_decision_fail():
     queue = json.loads((Path(payload["report_dir"]) / "queue-eligibility.json").read_text(encoding="utf-8"))
     if not queue["queue"]["confirmed_findings"]:
         raise AssertionError("queue-eligibility should mark confirmed finding, got: " + json.dumps(queue))
+    next_actions = json.loads((Path(payload["report_dir"]) / "next-actions.json").read_text(encoding="utf-8"))
+    if not next_actions["next_actions"] or next_actions["next_actions"][0]["owner_expert"] != "safety-permissions-expert":
+        raise AssertionError("next-actions should route authority violation to safety expert, got: " + json.dumps(next_actions))
     return {"case": "trust-decision-fail", "decision": manifest["decision"], "findings": payload["findings"]}
 
 

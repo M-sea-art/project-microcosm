@@ -47,7 +47,9 @@ discussion.
    - `tests/run_trust_acceptance.py` (trust)
    - `tests/unit/test_*.py` (kernel unit)
 4. Run the full suite locally. Every case must remain green.
-5. Open a pull request.
+5. Select the relevant expert areas in the pull request template. See
+   `docs/EXPERTS.md`.
+6. Open a pull request.
 
 ## Design Rules
 

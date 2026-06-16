@@ -1,0 +1,26 @@
+# Replace these owner entries with real maintainers or teams as the
+# project grows. For now the repository owner reviews all expert areas.
+
+/SKILL.md @M-sea-art
+/references/workflow.md @M-sea-art
+/references/platform-compatibility.md @M-sea-art
+
+/scripts/microcosm/adapters/ @M-sea-art
+/references/security-policy.md @M-sea-art
+/docs/SECURITY.md @M-sea-art
+
+/schemas/ @M-sea-art
+/scripts/microcosm/validate.py @M-sea-art
+/scripts/microcosm/findings.py @M-sea-art
+
+/scripts/microcosm/geometry/ @M-sea-art
+/references/geometry-engine.md @M-sea-art
+/references/invariant-catalog.md @M-sea-art
+
+/.github/workflows/ @M-sea-art
+/pyproject.toml @M-sea-art
+/docs/CHANGELOG.md @M-sea-art
+
+/tests/ @M-sea-art
+/docs/ @M-sea-art
+/README.md @M-sea-art
