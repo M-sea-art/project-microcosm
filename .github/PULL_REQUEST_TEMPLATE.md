@@ -4,16 +4,19 @@ Describe the user-facing or agent-facing change.
 
 ## Why
 
-Explain the software-evolution timeline reason: what future risk is
-being surfaced, resolved, or made easier to verify.
+Explain the time-compression reason: what slow execution path is being
+shortened, avoided, split, or made easier to verify.
 
 ## Expert Areas
 
-- [ ] Temporal Microcosm Architect
+- [ ] Time Compression Architect
+- [ ] Minimum Path Expert
+- [ ] Structural Probe Expert
+- [ ] Deep Decision Expert
 - [ ] Causal Chain Expert
 - [ ] Scenario Rehearsal Expert
 - [ ] State Snapshot Expert
-- [ ] Evidence and Confidence Expert
+- [ ] Flow Simplification Expert
 - [ ] Risk Visibility Expert
 - [ ] Human-Agent Decision Expert
 - [ ] CI and Release Engineer

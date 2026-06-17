@@ -1,8 +1,9 @@
 # Temporal Engine
 
-Project Microcosm's temporal purpose is to compress software evolution
-time: show the current state, projected future state, and verification
-path before delayed structural risks become expensive.
+Project Microcosm's temporal purpose is to compress slow implementation
+time: use structural exploration and deep decision-making to find the
+smallest, fastest feasible path before software, agent, or skill work
+falls into a cumbersome execution flow.
 
 Implemented temporal objects:
 
@@ -10,8 +11,8 @@ Implemented temporal objects:
 - `Event`: planned or observed change in the timeline.
 - `Transition`: deterministic movement from one state to another.
 - `Snapshot`: persisted MIR under `.microcosm/snapshots/`.
-- `Forecast`: predicted finding delta, deferred consequence, and
-  verification points.
+- `Forecast`: predicted finding delta, smallest fastest path, deferred
+  consequence, and verification points.
 
 Reserved for later versions: Temporal Assertion, runtime Trace
 ingestion, Tick, and executable Scenario DSL.

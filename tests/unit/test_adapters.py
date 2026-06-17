@@ -9,6 +9,7 @@ from microcosm.adapters.generic_repo import GenericRepoAdapter
 from microcosm.adapters.python_ast import PythonAstAdapter
 from microcosm.adapters.agent_skills import AgentSkillsAdapter
 from microcosm.adapters.mcp_config import McpConfigAdapter
+from microcosm.normalize import node_id
 
 
 class AdapterExclusionTests(unittest.TestCase):
@@ -37,7 +38,7 @@ class AdapterExclusionTests(unittest.TestCase):
 
             scan = AgentSkillsAdapter().scan(root)
 
-            self.assertIn("skill." + root.name.lower(), {node["id"] for node in scan["nodes"]})
+            self.assertIn(node_id("skill", root.name), {node["id"] for node in scan["nodes"]})
             self.assertTrue(any(edge["relation"] == "contains" for edge in scan["edges"]))
 
     def test_mcp_config_adapter_observes_servers(self):

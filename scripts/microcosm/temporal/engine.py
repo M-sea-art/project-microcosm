@@ -13,8 +13,9 @@ from .transitions import make_transition, observed_events, planned_events
 
 
 TEMPORAL_PURPOSE = (
-    "Compress future software-evolution consequences into a pre-change or "
-    "post-change decision report."
+    "Find the smallest fastest feasible implementation path by compressing "
+    "structural exploration and deep decision-making into a pre-change or "
+    "post-change report."
 )
 
 

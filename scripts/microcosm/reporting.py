@@ -79,17 +79,17 @@ def compute_queue_eligibility(findings):
 
 
 EXPERT_BY_CATEGORY = {
-    "architecture-drift": "temporal-microcosm-architect",
-    "undeclared-edge": "causal-chain-expert",
-    "missing-required-path": "causal-chain-expert",
+    "architecture-drift": "time-compression-architect",
+    "undeclared-edge": "structural-probe-expert",
+    "missing-required-path": "minimum-path-expert",
     "authority-violation": "human-agent-decision-expert",
-    "multiple-writers": "state-snapshot-expert",
+    "multiple-writers": "minimum-path-expert",
     "cyclic-dependency": "causal-chain-expert",
-    "excessive-fanout": "risk-visibility-expert",
-    "unverified-inference": "evidence-confidence-expert",
-    "schema-mismatch": "evidence-confidence-expert",
-    "adapter-failure": "causal-chain-expert",
-    "evidence-missing": "evidence-confidence-expert",
+    "excessive-fanout": "flow-simplification-expert",
+    "unverified-inference": "deep-decision-expert",
+    "schema-mismatch": "deep-decision-expert",
+    "adapter-failure": "structural-probe-expert",
+    "evidence-missing": "deep-decision-expert",
 }
 
 
@@ -128,7 +128,7 @@ def compute_next_actions(findings, validation_delta, decision):
         actions.append({
             "id": "action." + str(finding_id or category).replace("finding.", ""),
             "priority": _priority_for_severity(severity),
-            "owner_expert": EXPERT_BY_CATEGORY.get(category, "temporal-microcosm-architect"),
+            "owner_expert": EXPERT_BY_CATEGORY.get(category, "minimum-path-expert"),
             "finding_refs": [finding_id] if finding_id else [],
             "recommended_mode": _mode_for_category(category),
             "requires_human_approval": severity in {"critical", "high"} or decision == "FAIL",
@@ -140,7 +140,7 @@ def compute_next_actions(findings, validation_delta, decision):
         actions.append({
             "id": "action.normal-review",
             "priority": "P4",
-            "owner_expert": "temporal-microcosm-architect",
+            "owner_expert": "minimum-path-expert",
             "finding_refs": [],
             "recommended_mode": "inspect",
             "requires_human_approval": False,
@@ -245,7 +245,7 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "## Decision",
         decision,
         "",
-        "## Temporal microcosm judgment",
+        "## Time compression judgment",
         "purpose: " + str(temporal_report.get("purpose", "")),
         "current_state: " + _summary_state_line(temporal_report, "current"),
         "projected_or_compared_state: " + _summary_non_current_state_line(temporal_report),
@@ -253,6 +253,10 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "forecast_confidence: " + str((temporal_report.get("forecast") or {}).get("confidence")),
         "projected_new_findings: " + (", ".join(((temporal_report.get("forecast") or {}).get("finding_delta") or {}).get("new", [])) or "(none)"),
         "projected_resolved_findings: " + (", ".join(((temporal_report.get("forecast") or {}).get("finding_delta") or {}).get("resolved", [])) or "(none)"),
+        "fastest_path_decision: " + str(((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {}).get("decision")),
+        "fastest_path_summary: " + str(((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {}).get("summary")),
+        "compressed_steps: " + _compressed_steps_line(temporal_report),
+        "avoid_cumbersome_flow: " + _avoid_line(temporal_report),
         "minimum_safe_next_step: " + str((temporal_report.get("forecast") or {}).get("minimum_safe_next_step")),
         "verification_points: " + "; ".join((temporal_report.get("forecast") or {}).get("verification_points", [])),
         "",
@@ -330,7 +334,10 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         lines.append("- " + item)
 
     lines += ["", "## Recommended next action"]
-    if decision == "FAIL":
+    path = ((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {})
+    if path.get("decision"):
+        lines.append("Follow fastest_path_decision `{}`: {}".format(path.get("decision"), path.get("summary")))
+    elif decision == "FAIL":
         lines.append("Stop merging. Inspect critical/high findings above and decide whether to fix, accept, or escalate.")
     elif decision == "WARN":
         lines.append("Proceed with caution. Review probable/medium findings and confirm before merging.")
@@ -376,6 +383,16 @@ def _summary_non_current_state_line(temporal_report):
         if line != "(not available)":
             return role + " " + line
     return "(not available)"
+
+
+def _compressed_steps_line(temporal_report):
+    path = ((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {})
+    return "; ".join(step.get("action", "") for step in path.get("compressed_steps", []) if step.get("action")) or "(none)"
+
+
+def _avoid_line(temporal_report):
+    path = ((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {})
+    return "; ".join(path.get("avoid_cumbersome_flow", [])) or "(none)"
 
 
 def _read_baseline_snapshot(path):

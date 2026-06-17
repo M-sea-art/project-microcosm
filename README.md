@@ -1,6 +1,6 @@
 # Project Microcosm
 
-Temporal microcosm for software evolution decisions.
+Temporal microcosm for the smallest fastest feasible implementation path.
 
 Start with the full project guide:
 
@@ -16,6 +16,7 @@ Quick check:
 python scripts/microcosm.py inspect --project .
 ```
 
-Project Microcosm is advisory by default: it compresses current state,
-projected future state, findings, risk, and machine-readable next
-actions into reports; it does not modify source code or enforce merges.
+Project Microcosm is advisory by default: it compresses structure
+exploration, deep decision-making, projected future state, findings,
+risk, and machine-readable next actions into the shortest feasible
+path; it does not modify source code or enforce merges.

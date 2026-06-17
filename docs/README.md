@@ -1,14 +1,16 @@
 # Project Microcosm
 
-> **Temporal microcosm for software evolution decisions.**
+> **Temporal microcosm for the smallest fastest feasible implementation path.**
 
-Project Microcosm compresses software evolution time: it helps humans
-and agents see the current state, a projected future state, and the
-verification path before problems would normally surface hours, days,
-or weeks later. It models the project **horizontally** (structural
-topology) and **vertically** (state evolution) as a typed,
-evidence-backed intermediate representation (MIR), then answers the
-questions ordinary code graphs avoid:
+Project Microcosm compresses slow implementation time: it helps humans
+and agents find the smallest, fastest feasible path before a software,
+agent, or skill project gets dragged into a cumbersome execution flow.
+It does this through structural exploration, deep decision-making,
+current state, projected future state, and a verification path. It
+models the project **horizontally** (structural topology) and
+**vertically** (state evolution) as a typed, evidence-backed
+intermediate representation (MIR), then answers the questions ordinary
+code graphs avoid:
 
 - Should this edge exist?
 - Who is allowed to traverse it?
@@ -114,7 +116,7 @@ Every run writes under `<project>/.microcosm/reports/<run-id>/`:
 | `validation.json`     | Humans + Agents | MIR validator issues + schema-mismatch findings. |
 | `queue-eligibility.json` | Agents | Confirmed / probable / concern / hypothesis / schema_mismatch buckets. |
 | `next-actions.json`   | Agents   | Prioritized next actions with owner expert and recommended mode. |
-| `temporal-report.json` | Humans + Agents | Current/projected states, events, transitions, forecast, expert judgment. |
+| `temporal-report.json` | Humans + Agents | Current/projected states, events, transitions, smallest fastest path, forecast, expert judgment. |
 | `unresolved.json`     | Humans   | Known unanalyzable regions.            |
 | `geometry-diff.json`  | Agents   | Pre/post node + edge + finding diff (verify only). |
 | `manifest.json`       | Both     | Decision, file list, versions.         |

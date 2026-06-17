@@ -14,7 +14,10 @@ CATEGORY_CONSEQUENCE = {
 
 
 EXPERTS = [
-    "temporal-microcosm-architect",
+    "time-compression-architect",
+    "minimum-path-expert",
+    "structural-probe-expert",
+    "deep-decision-expert",
     "causal-chain-expert",
     "scenario-rehearsal-expert",
     "state-snapshot-expert",
@@ -65,12 +68,14 @@ def forecast_from_findings(mode, decision, risk, finding_delta, after_findings=N
         })
 
     confidence = _forecast_confidence(_finding_objects(new_findings + still_open + resolved, after_by_id))
+    fastest_path = smallest_fastest_path(mode, decision, risk, delta_ids)
     return {
         "mode": mode,
         "decision": decision,
         "risk_level": (risk or {}).get("level", "low"),
         "finding_delta": delta_ids,
         "risk_visibility": visible_risks,
+        "smallest_fastest_path": fastest_path,
         "minimum_safe_next_step": minimum_safe_next_step(mode, decision, delta_ids),
         "verification_points": verification_points(mode, delta_ids),
         "confidence": confidence,
@@ -115,8 +120,12 @@ def expert_judgments(mode, forecast, forecast_check=None):
     risk_level = forecast.get("risk_level")
     low_confidence = forecast.get("band") in {"concern", "hypothesis"}
     unpredicted = len((forecast_check or {}).get("unpredicted_new_findings", []))
+    path = forecast.get("smallest_fastest_path") or {}
     return [
-        _judgment("temporal-microcosm-architect", "PASS", "Current and projected states are represented as temporal states."),
+        _judgment("time-compression-architect", "PASS", "The run compresses slow implementation discovery into a structured decision point."),
+        _judgment("minimum-path-expert", "WARN" if path.get("decision") not in {"FAST_TRACK", "APPLY_THEN_VERIFY"} else "PASS", _path_summary(path)),
+        _judgment("structural-probe-expert", "PASS", "The decision starts from observed structure before execution."),
+        _judgment("deep-decision-expert", "WARN" if low_confidence else "PASS", "The path decision uses confidence band {}.".format(forecast.get("band"))),
         _judgment("causal-chain-expert", "WARN" if new_count or unpredicted else "PASS", _causal_summary(new_count, unpredicted)),
         _judgment("scenario-rehearsal-expert", "WARN" if mode == "plan-change" and (new_count or still_open_count) else "PASS", _scenario_summary(mode, new_count, still_open_count)),
         _judgment("state-snapshot-expert", "PASS", "Snapshots provide the baseline for history, current state, and verification."),
@@ -124,6 +133,93 @@ def expert_judgments(mode, forecast, forecast_check=None):
         _judgment("risk-visibility-expert", "WARN" if risk_level in {"medium", "high", "critical"} or new_count else "PASS", "Deferred-cost risks visible: {}".format(len(forecast.get("risk_visibility", [])))),
         _judgment("human-agent-decision-expert", "NEEDS_HUMAN" if risk_level in {"high", "critical"} or forecast.get("decision") == "FAIL" else "PASS", "Human approval is required for high, critical, or failing temporal risk."),
     ]
+
+
+def smallest_fastest_path(mode, decision, risk, delta_ids):
+    risk_level = (risk or {}).get("level", "low")
+    new = delta_ids.get("new", [])
+    resolved = delta_ids.get("resolved", [])
+    still_open = delta_ids.get("still_open", [])
+    common_avoid = [
+        "Do not start a broad rewrite before the structural finding is isolated.",
+        "Do not run an open-ended execution flow when one plan-change plus one verify can prove the path.",
+    ]
+    if decision == "UNAVAILABLE":
+        return _path(
+            "NEEDS_STRUCTURE_PROBE",
+            "No reliable fast path exists until the project exposes enough structure.",
+            [
+                "Enable a supported adapter or fixture for the target area.",
+                "Run inspect again and use that snapshot as the decision baseline.",
+            ],
+            common_avoid + ["Do not guess the implementation path without observable structure."],
+        )
+    if mode == "plan-change" and new:
+        return _path(
+            "SPLIT_OR_REVISE_BEFORE_BUILD",
+            "The fastest real path is to revise the plan now because the current plan projects new findings.",
+            [
+                "Keep the unchanged parts of the plan.",
+                "Remove or split the action that creates projected findings: " + ", ".join(new),
+                "Run plan-change again until projected new findings are empty.",
+                "Apply only the clean slice, then verify against this run.",
+            ],
+            common_avoid + ["Do not implement the full plan and discover the violation after the fact."],
+        )
+    if mode == "plan-change" and resolved:
+        return _path(
+            "APPLY_THEN_VERIFY",
+            "The fastest safe path is to apply the minimal planned change because it resolves existing findings without projecting new ones.",
+            [
+                "Apply the planned change exactly as rehearsed.",
+                "Run verify against this run id.",
+                "Accept the change only if resolved findings disappear and no new findings appear.",
+            ],
+            common_avoid,
+        )
+    if mode == "verify" and new:
+        return _path(
+            "STOP_AND_MINIMAL_FIX",
+            "The fastest path is a narrow fix for the new observed findings before this state becomes baseline.",
+            [
+                "Do not broaden scope.",
+                "Fix only the subjects behind new findings: " + ", ".join(new),
+                "Run verify again against the same baseline.",
+            ],
+            common_avoid + ["Do not accept this snapshot as baseline while new findings are open."],
+        )
+    if still_open and decision in {"WARN", "FAIL"}:
+        return _path(
+            "MINIMAL_FIX_OR_ACCEPT",
+            "The fastest path is to either fix or explicitly accept the still-open findings before adding more work.",
+            [
+                "Review still-open findings: " + ", ".join(still_open),
+                "Choose one narrow fix or one explicit acceptance decision.",
+                "Run verify or inspect after that single decision.",
+            ],
+            common_avoid + ["Do not stack new execution work on top of unresolved structure debt."],
+        )
+    if risk_level in {"high", "critical"}:
+        return _path(
+            "HUMAN_DECISION_GATE",
+            "The shortest feasible path requires a human decision because the compressed risk is high.",
+            [
+                "Review the risk section.",
+                "Approve, reject, or split the path before execution.",
+                "Run the smallest approved slice next.",
+            ],
+            common_avoid,
+        )
+    return _path(
+        "FAST_TRACK",
+        "No structural reason blocks the short path; proceed with the smallest intended change and verify once.",
+        [
+            "Apply the smallest intended change.",
+            "Run verify or inspect once after the change.",
+            "Use the resulting snapshot as the next baseline.",
+        ],
+        common_avoid,
+    )
 
 
 def minimum_safe_next_step(mode, decision, delta_ids):
@@ -203,6 +299,24 @@ def _band(confidence):
 
 def _judgment(expert, decision, summary):
     return {"expert": expert, "decision": decision, "summary": summary}
+
+
+def _path(decision, summary, steps, avoid):
+    return {
+        "decision": decision,
+        "summary": summary,
+        "compressed_steps": [
+            {"id": "path.step.{}".format(index), "action": step}
+            for index, step in enumerate(steps, start=1)
+        ],
+        "avoid_cumbersome_flow": avoid,
+    }
+
+
+def _path_summary(path):
+    if not path:
+        return "No minimum path decision was produced."
+    return "{}: {}".format(path.get("decision"), path.get("summary"))
 
 
 def _causal_summary(new_count, unpredicted):

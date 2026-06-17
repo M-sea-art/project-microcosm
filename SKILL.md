@@ -1,11 +1,11 @@
 ---
 name: project-microcosm
-description: Use this when compressing a software or agent project's evolution timeline: current state, projected future state, permissions, ownership, dependencies, pre-change impact, post-change verification, agent-tool-memory boundaries, permission changes, major refactors, repeated failures, or cyclic dependencies. Do not use for trivial text edits, isolated code explanation, single-variable renames, comment tweaks, or formatting one JSON file.
+description: Use this when finding the smallest fastest feasible implementation path for a software, agent, or skill project by compressing structural exploration, deep decision-making, current state, projected future state, permissions, ownership, dependencies, pre-change impact, post-change verification, agent-tool-memory boundaries, permission changes, major refactors, repeated failures, or cyclic dependencies. Do not use for trivial text edits, isolated code explanation, single-variable renames, comment tweaks, or formatting one JSON file.
 ---
 
 # Project Microcosm
 
-Model a project horizontally as structural topology and vertically as state evolution. Treat this skill as a temporal microcosm for software evolution decisions: compress risks that would normally surface later into a pre-change or post-change report. It is not a code writer or commit blocker.
+Model a project horizontally as structural topology and vertically as state evolution. Treat this skill as a temporal microcosm for path selection: compress slow implementation discovery into the smallest, fastest feasible next path. It is not a code writer or commit blocker.
 
 ## Operating principles
 

@@ -54,9 +54,12 @@ def case_introduce_violation():
         raise AssertionError("temporal-report expected plan-change mode, got: " + json.dumps(temporal))
     if not temporal["forecast"]["finding_delta"]["new"]:
         raise AssertionError("temporal-report should expose projected new findings, got: " + json.dumps(temporal))
+    path = temporal["forecast"].get("smallest_fastest_path", {})
+    if path.get("decision") != "SPLIT_OR_REVISE_BEFORE_BUILD":
+        raise AssertionError("temporal-report should choose split/revise fast path for projected findings, got: " + json.dumps(temporal))
     summary = (report_dir / "summary.md").read_text(encoding="utf-8")
-    if "## Temporal microcosm judgment" not in summary:
-        raise AssertionError("summary.md missing temporal microcosm judgment")
+    if "## Time compression judgment" not in summary or "fastest_path_decision" not in summary:
+        raise AssertionError("summary.md missing time compression path judgment")
     return {"case": name, "new": payload["new_preview"]}
 
 

@@ -27,6 +27,7 @@ class TemporalForecastTests(unittest.TestCase):
         )
         self.assertEqual(forecast["band"], "hypothesis")
         self.assertEqual(forecast["confidence"], 0.2)
+        self.assertEqual(forecast["smallest_fastest_path"]["decision"], "SPLIT_OR_REVISE_BEFORE_BUILD")
         self.assertIn("projected findings", forecast["minimum_safe_next_step"])
 
 
