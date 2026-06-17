@@ -96,7 +96,7 @@ class ValidateTests(unittest.TestCase):
 
 
 class NextActionTests(unittest.TestCase):
-    def test_routes_authority_violation_to_safety_expert(self):
+    def test_routes_authority_violation_to_human_agent_decision_expert(self):
         actions = compute_next_actions([{
             "id": "finding.authority-violation.abc",
             "category": "authority-violation",
@@ -104,8 +104,10 @@ class NextActionTests(unittest.TestCase):
             "message": "forbidden write",
         }], [], "FAIL")
         self.assertEqual(actions[0]["priority"], "P0")
-        self.assertEqual(actions[0]["owner_expert"], "safety-permissions-expert")
+        self.assertEqual(actions[0]["owner_expert"], "human-agent-decision-expert")
         self.assertEqual(actions[0]["recommended_mode"], "plan-change")
+        self.assertEqual(actions[0]["temporal_pressure"], "immediate")
+        self.assertIn("unauthorized path", actions[0]["deferred_consequence"])
         self.assertTrue(actions[0]["requires_human_approval"])
 
 

@@ -25,6 +25,15 @@
         "UNAVAILABLE"
       ]
     },
+    "next_actions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "temporal_report": {
+      "type": "string"
+    },
     "files": {
       "type": "array",
       "items": {

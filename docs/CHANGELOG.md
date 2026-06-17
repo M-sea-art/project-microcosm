@@ -15,11 +15,24 @@ with the pre-release tag conventions described below.
 - `next-actions.json` report output and `manifest.json.next_actions`
   for machine-readable agent handoff.
 - Basic read-only `agent-skills` and `mcp-config` adapters.
+- `temporal-report.json` for inspect, plan-change, and verify runs.
+- Minimal deterministic temporal model: State, Event, Transition,
+  Snapshot, and Forecast.
+- Temporal expert decision model centered on software evolution time
+  compression.
 
 ### Changed
 
 - GitHub Actions now runs `compat-check` against the repository root
   and uploads its JSON output as a workflow artifact.
+- Project positioning now centers on temporal microcosm decisions
+  rather than agent governance as the primary story.
+- `plan-change` now emits projected future findings, deferred
+  consequences, minimum safe next steps, and verification points.
+- `verify` now emits observed timeline transitions and marks
+  unpredicted new findings when no prior forecast exists.
+- `next-actions.json` now includes temporal pressure and deferred
+  consequence fields.
 
 ## [0.1.0-beta.1] - 2026-06-07
 

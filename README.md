@@ -1,6 +1,6 @@
 # Project Microcosm
 
-Advisory structural cognition kernel for agentic software engineering.
+Temporal microcosm for software evolution decisions.
 
 Start with the full project guide:
 
@@ -16,6 +16,6 @@ Quick check:
 python scripts/microcosm.py inspect --project .
 ```
 
-Project Microcosm is advisory by default: it reports structure,
-findings, risk, and machine-readable next actions; it does not modify
-source code or enforce merges.
+Project Microcosm is advisory by default: it compresses current state,
+projected future state, findings, risk, and machine-readable next
+actions into reports; it does not modify source code or enforce merges.

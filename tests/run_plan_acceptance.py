@@ -48,6 +48,15 @@ def case_introduce_violation():
     payload = json.loads(proc.stdout)
     if not any(fid.startswith("finding.authority-violation.") for fid in payload["new_preview"]):
         raise AssertionError("plan-introduce-violation expected authority-violation new, got: " + json.dumps(payload))
+    report_dir = Path(payload["report_dir"])
+    temporal = json.loads((report_dir / "temporal-report.json").read_text(encoding="utf-8"))
+    if temporal["mode"] != "plan-change":
+        raise AssertionError("temporal-report expected plan-change mode, got: " + json.dumps(temporal))
+    if not temporal["forecast"]["finding_delta"]["new"]:
+        raise AssertionError("temporal-report should expose projected new findings, got: " + json.dumps(temporal))
+    summary = (report_dir / "summary.md").read_text(encoding="utf-8")
+    if "## Temporal microcosm judgment" not in summary:
+        raise AssertionError("summary.md missing temporal microcosm judgment")
     return {"case": name, "new": payload["new_preview"]}
 
 

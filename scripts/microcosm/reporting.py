@@ -2,11 +2,13 @@
 
 import json
 from pathlib import Path
+from .temporal.engine import build_static_report, build_verify_report
+from .temporal.operators import CATEGORY_CONSEQUENCE
 from .versioning import MICROCOSM_VERSION, SCHEMA_VERSION, GENERATOR_VERSION
 
 DEFAULT_UNRESOLVED = [
     "Runtime activity graph unavailable in V0.1",
-    "Temporal engine unavailable in V0.1",
+    "Direct temporal scenario DSL unavailable in V0.1",
 ]
 
 QUEUE_CONFIRMED = "confirmed_findings"
@@ -77,17 +79,17 @@ def compute_queue_eligibility(findings):
 
 
 EXPERT_BY_CATEGORY = {
-    "architecture-drift": "agent-runtime-architect",
-    "undeclared-edge": "adapter-integration-expert",
-    "missing-required-path": "geometry-invariant-expert",
-    "authority-violation": "safety-permissions-expert",
-    "multiple-writers": "geometry-invariant-expert",
-    "cyclic-dependency": "geometry-invariant-expert",
-    "excessive-fanout": "geometry-invariant-expert",
-    "unverified-inference": "agent-runtime-architect",
-    "schema-mismatch": "mir-evidence-schema-expert",
-    "adapter-failure": "adapter-integration-expert",
-    "evidence-missing": "mir-evidence-schema-expert",
+    "architecture-drift": "temporal-microcosm-architect",
+    "undeclared-edge": "causal-chain-expert",
+    "missing-required-path": "causal-chain-expert",
+    "authority-violation": "human-agent-decision-expert",
+    "multiple-writers": "state-snapshot-expert",
+    "cyclic-dependency": "causal-chain-expert",
+    "excessive-fanout": "risk-visibility-expert",
+    "unverified-inference": "evidence-confidence-expert",
+    "schema-mismatch": "evidence-confidence-expert",
+    "adapter-failure": "causal-chain-expert",
+    "evidence-missing": "evidence-confidence-expert",
 }
 
 
@@ -109,6 +111,14 @@ def _mode_for_category(category):
     return "inspect"
 
 
+def _temporal_pressure(severity):
+    if severity in {"critical", "high"}:
+        return "immediate"
+    if severity == "medium":
+        return "near-term"
+    return "watch"
+
+
 def compute_next_actions(findings, validation_delta, decision):
     actions = []
     for finding in findings + validation_delta:
@@ -118,26 +128,30 @@ def compute_next_actions(findings, validation_delta, decision):
         actions.append({
             "id": "action." + str(finding_id or category).replace("finding.", ""),
             "priority": _priority_for_severity(severity),
-            "owner_expert": EXPERT_BY_CATEGORY.get(category, "agent-runtime-architect"),
+            "owner_expert": EXPERT_BY_CATEGORY.get(category, "temporal-microcosm-architect"),
             "finding_refs": [finding_id] if finding_id else [],
             "recommended_mode": _mode_for_category(category),
             "requires_human_approval": severity in {"critical", "high"} or decision == "FAIL",
+            "temporal_pressure": _temporal_pressure(severity),
+            "deferred_consequence": CATEGORY_CONSEQUENCE.get(category, "If deferred, the future project state becomes less certain."),
             "summary": finding.get("message") or category,
         })
     if not actions and decision == "PASS":
         actions.append({
             "id": "action.normal-review",
             "priority": "P4",
-            "owner_expert": "developer-experience-expert",
+            "owner_expert": "temporal-microcosm-architect",
             "finding_refs": [],
             "recommended_mode": "inspect",
             "requires_human_approval": False,
+            "temporal_pressure": "watch",
+            "deferred_consequence": "No deferred structural consequence is visible in this run.",
             "summary": "No critical/high findings detected; continue normal review.",
         })
     return sorted(actions, key=lambda item: item["priority"])
 
 
-def write_reports(project_root, run_id, mir, active_adapters, inferred=None, proposed=None, unresolved=None, verify_diff=None, base_unresolved=None, validation_payload=None, decision_override=None, risk=None):
+def write_reports(project_root, run_id, mir, active_adapters, inferred=None, proposed=None, unresolved=None, verify_diff=None, base_unresolved=None, validation_payload=None, decision_override=None, risk=None, temporal_report=None, next_action_findings=None, report_mode="inspect"):
     base = Path(project_root) / ".microcosm"
     report_dir = base / "reports" / run_id
     snap_dir = base / "snapshots"
@@ -154,7 +168,12 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
     geometry_diff_only = (verify_diff or {}).get("geometry", {})
     risk = risk or compute_risk(findings, geometry_diff_only)
     decision = decision_override or compute_decision(findings + validation_delta, validation_delta, active_adapters)
-    next_actions = compute_next_actions(findings, validation_delta, decision)
+    next_actions = compute_next_actions(next_action_findings if next_action_findings is not None else findings, validation_delta, decision)
+    if temporal_report is None and verify_diff is not None:
+        baseline = _read_baseline_snapshot(verify_diff.get("before_snapshot"))
+        if baseline is not None:
+            temporal_report = build_verify_report(project_root, run_id, baseline, mir, verify_diff, risk, decision)
+    temporal_report = temporal_report or build_static_report(project_root, run_id, mir, decision, risk, mode=report_mode)
 
     (report_dir / "findings.json").write_text(json.dumps({
         "microcosm_version": MICROCOSM_VERSION,
@@ -193,6 +212,8 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "next_actions": next_actions,
     }, indent=2, ensure_ascii=False), encoding="utf-8")
 
+    (report_dir / "temporal-report.json").write_text(json.dumps(temporal_report, indent=2, ensure_ascii=False), encoding="utf-8")
+
     unresolved_list = list(unresolved) if unresolved is not None else list(DEFAULT_UNRESOLVED)
     base_unresolved_list = list(base_unresolved or DEFAULT_UNRESOLVED)
     for item in base_unresolved_list:
@@ -223,6 +244,17 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "",
         "## Decision",
         decision,
+        "",
+        "## Temporal microcosm judgment",
+        "purpose: " + str(temporal_report.get("purpose", "")),
+        "current_state: " + _summary_state_line(temporal_report, "current"),
+        "projected_or_compared_state: " + _summary_non_current_state_line(temporal_report),
+        "forecast_band: " + str((temporal_report.get("forecast") or {}).get("band")),
+        "forecast_confidence: " + str((temporal_report.get("forecast") or {}).get("confidence")),
+        "projected_new_findings: " + (", ".join(((temporal_report.get("forecast") or {}).get("finding_delta") or {}).get("new", [])) or "(none)"),
+        "projected_resolved_findings: " + (", ".join(((temporal_report.get("forecast") or {}).get("finding_delta") or {}).get("resolved", [])) or "(none)"),
+        "minimum_safe_next_step: " + str((temporal_report.get("forecast") or {}).get("minimum_safe_next_step")),
+        "verification_points: " + "; ".join((temporal_report.get("forecast") or {}).get("verification_points", [])),
         "",
         "## Risk",
         "score: " + str(risk["score"]),
@@ -307,11 +339,11 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
     else:
         lines.append("No critical/high findings detected. Safe to proceed with normal review.")
 
-    lines += ["", "## Machine-readable next actions", "See `next-actions.json`."]
+    lines += ["", "## Machine-readable next actions", "See `next-actions.json` and `temporal-report.json`."]
 
     (report_dir / "summary.md").write_text("\n".join(lines) + "\n", encoding="utf-8")
 
-    manifest_files = ["summary.md", "findings.json", "queue-eligibility.json", "next-actions.json", "unresolved.json"]
+    manifest_files = ["summary.md", "findings.json", "queue-eligibility.json", "next-actions.json", "temporal-report.json", "unresolved.json"]
     if verify_diff is not None:
         manifest_files.insert(2, "geometry-diff.json")
     (report_dir / "manifest.json").write_text(json.dumps({
@@ -321,6 +353,35 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "run_id": run_id,
         "decision": decision,
         "next_actions": next_actions,
+        "temporal_report": "temporal-report.json",
         "files": manifest_files,
     }, indent=2), encoding="utf-8")
     return report_dir
+
+
+def _summary_state_line(temporal_report, role):
+    for state in temporal_report.get("states", []):
+        if state.get("role") == role:
+            return "nodes={nodes} edges={edges} findings={findings}".format(
+                nodes=state.get("node_count"),
+                edges=state.get("edge_count"),
+                findings=state.get("finding_count"),
+            )
+    return "(not available)"
+
+
+def _summary_non_current_state_line(temporal_report):
+    for role in ("projected", "baseline"):
+        line = _summary_state_line(temporal_report, role)
+        if line != "(not available)":
+            return role + " " + line
+    return "(not available)"
+
+
+def _read_baseline_snapshot(path):
+    if not path:
+        return None
+    try:
+        return json.loads(Path(path).read_text(encoding="utf-8"))
+    except (OSError, ValueError, TypeError):
+        return None

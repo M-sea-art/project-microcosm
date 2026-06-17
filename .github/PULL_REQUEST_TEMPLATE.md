@@ -4,15 +4,18 @@ Describe the user-facing or agent-facing change.
 
 ## Why
 
-Explain the structural, safety, or developer-experience reason.
+Explain the software-evolution timeline reason: what future risk is
+being surfaced, resolved, or made easier to verify.
 
 ## Expert Areas
 
-- [ ] Agent Runtime Architect
-- [ ] Safety and Permissions Expert
-- [ ] MIR and Evidence Schema Expert
-- [ ] Adapter Integration Expert
-- [ ] Geometry and Invariant Expert
+- [ ] Temporal Microcosm Architect
+- [ ] Causal Chain Expert
+- [ ] Scenario Rehearsal Expert
+- [ ] State Snapshot Expert
+- [ ] Evidence and Confidence Expert
+- [ ] Risk Visibility Expert
+- [ ] Human-Agent Decision Expert
 - [ ] CI and Release Engineer
 - [ ] Test Fixture Curator
 - [ ] Developer Experience Expert

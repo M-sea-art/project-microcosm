@@ -1,48 +1,60 @@
-# Expert Ownership Model
+# Expert Decision Model
 
-Project Microcosm uses expert areas to keep agent-facing changes
-reviewable. The labels below are role names; map them to real GitHub
-users or teams in `CODEOWNERS` when maintainers are assigned.
+Project Microcosm uses expert areas to keep time-compressed software
+evolution decisions reviewable. The labels below are role names; map
+them to real GitHub users or teams in `CODEOWNERS` when maintainers are
+assigned.
 
-## Agent Runtime Architect
+## Temporal Microcosm Architect
 
-Owns `SKILL.md`, workflow references, CLI mode contracts, and agent
-trigger behavior. A change is done when an agent can decide when to run
-the skill, which mode to use, and which output file to consume without
-extra interpretation.
+Owns the core purpose: current state, projected future state,
+verification path, and the `State / Event / Transition / Snapshot /
+Forecast` model. A change is done when delayed software-evolution risk
+is visible before or immediately after a change lands.
 
-## Safety and Permissions Expert
+## Causal Chain Expert
 
-Owns filesystem traversal, secret exclusions, write boundaries, and
-no-execution guarantees. Any adapter change requires this review.
+Owns downstream consequence reasoning. Reviews dependency paths,
+required mediation paths, undeclared edges, cycles, and any change
+where one action can create later structural risk.
 
-## MIR and Evidence Schema Expert
+## Scenario Rehearsal Expert
 
-Owns schemas, validation, evidence resolution, confidence bands, and
-stable finding IDs. Schema and finding changes must preserve explicit
-migration behavior.
+Owns `plan-change` behavior. Reviews whether a proposed change creates
+clear projected findings, minimum safe next steps, and post-change
+verification points.
 
-## Adapter Integration Expert
+## State Snapshot Expert
 
-Owns scanners under `scripts/microcosm/adapters/`. Adapters must be
-read-only, deterministic, and covered by fixtures.
+Owns `.microcosm/snapshots/`, state summaries, baseline selection, and
+single-writer/state-persistence conflicts. A snapshot must clearly
+represent history, current state, target state, or rollback evidence.
 
-## Geometry and Invariant Expert
+## Evidence and Confidence Expert
 
-Owns geometry operators and invariant references. New invariants need
-positive and negative fixtures plus stable finding IDs.
+Owns schemas, validation, evidence levels, confidence bands, stable
+finding IDs, and forecast certainty. Low-confidence projections must
+remain hypotheses.
 
-## CI and Release Engineer
+## Risk Visibility Expert
 
-Owns GitHub Actions, packaging, tags, changelog entries, and release
-artifacts. Tags should point at the tested commit.
+Owns deferred consequence language, risk scoring, blast radius,
+irreversibility, external dependency risk, and "what gets expensive if
+we wait" guidance.
 
-## Test Fixture Curator
+## Human-Agent Decision Expert
 
-Owns fixture shape and idempotent acceptance runs. Tests may generate
-ignored reports and snapshots, but must restore tracked fixture files.
+Owns human approval boundaries and agent handoff decisions. Agent
+governance remains an application of time compression: agents act fast,
+so their future risks must become visible early.
 
-## Developer Experience Expert
+## Supporting Areas
 
-Owns GitHub entry points, quickstart, examples, and public docs. A new
-user should be able to install, inspect, and interpret results quickly.
+- Adapter integration remains necessary because missing adapters hide
+  parts of the timeline.
+- CI and release engineering remains necessary because tags, releases,
+  and PR checks are timeline states.
+- Test fixture curation remains necessary because every temporal claim
+  needs a reproducible before/after scenario.
+- Developer experience remains necessary because reports must be
+  understandable by both humans and agents.
