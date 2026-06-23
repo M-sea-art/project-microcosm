@@ -11,7 +11,8 @@ Implemented temporal objects:
 - `Event`: planned or observed change in the timeline.
 - `Transition`: deterministic movement from one state to another.
 - `Snapshot`: persisted MIR under `.microcosm/snapshots/`.
-- `Forecast`: predicted finding delta, smallest fastest path, deferred
+- `Forecast`: predicted finding delta, smallest fastest path, why it is
+  fastest, skip conditions, proof needed after execution, deferred
   consequence, and verification points.
 
 Reserved for later versions: Temporal Assertion, runtime Trace

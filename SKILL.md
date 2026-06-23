@@ -63,6 +63,8 @@ Always include analyzed scope, active adapters, model resolution, observed struc
 
 Machine output includes `.microcosm/reports/<run-id>/findings.json`, `next-actions.json`, and `temporal-report.json`; human output is `.microcosm/reports/<run-id>/summary.md`. They must derive from the same Finding and temporal state data.
 
+For path selection, read `temporal-report.json.forecast.smallest_fastest_path`: `decision`, `why_this_is_fastest`, `compressed_steps`, `avoid_cumbersome_flow`, `skip_conditions`, and `proof_needed_after_execution`.
+
 ## Safety
 
 Do not read known secret files. Do not execute repository code. Do not write outside `.microcosm/`. Do not request broader permissions automatically. If a region is unavailable, report it and lower confidence rather than bypassing boundaries.

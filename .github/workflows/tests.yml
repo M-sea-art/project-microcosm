@@ -40,6 +40,9 @@ jobs:
       - name: Compile
         run: python -m compileall -q scripts tests
 
+      - name: Rule copy drift check
+        run: python tools/check_rule_copies.py
+
       - name: Repository compatibility
         run: python scripts/microcosm.py compat-check --project . > compat-check.json
 
@@ -72,6 +75,9 @@ jobs:
         env:
           PYTHONPATH: scripts
         run: python tests/run_trust_acceptance.py
+
+      - name: Benchmark smoke
+        run: python tests/run_benchmark_smoke.py
 
       - name: Unit tests
         env:

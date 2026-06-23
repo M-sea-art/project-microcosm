@@ -57,8 +57,11 @@ def case_introduce_violation():
     path = temporal["forecast"].get("smallest_fastest_path", {})
     if path.get("decision") != "SPLIT_OR_REVISE_BEFORE_BUILD":
         raise AssertionError("temporal-report should choose split/revise fast path for projected findings, got: " + json.dumps(temporal))
+    for key in ["why_this_is_fastest", "skip_conditions", "proof_needed_after_execution"]:
+        if not path.get(key):
+            raise AssertionError("temporal-report fastest path missing " + key + ": " + json.dumps(temporal))
     summary = (report_dir / "summary.md").read_text(encoding="utf-8")
-    if "## Time compression judgment" not in summary or "fastest_path_decision" not in summary:
+    if "## Time compression judgment" not in summary or "fastest_path_decision" not in summary or "why_this_is_fastest" not in summary:
         raise AssertionError("summary.md missing time compression path judgment")
     return {"case": name, "new": payload["new_preview"]}
 

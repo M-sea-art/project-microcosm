@@ -39,7 +39,7 @@ can create delayed structural cost.
 
 Owns `plan-change` behavior. Reviews whether a proposed change can be
 rehearsed into a direct path: apply, split, fix, or reject before
-source code is touched.
+source code is touched, then verify that the chosen path landed.
 
 ## State Snapshot Expert
 

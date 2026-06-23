@@ -91,6 +91,8 @@ def case_regression():
         raise AssertionError("verify temporal-report should mark unpredicted new findings, got: " + json.dumps(temporal))
     if temporal["forecast"].get("smallest_fastest_path", {}).get("decision") != "STOP_AND_MINIMAL_FIX":
         raise AssertionError("verify temporal-report should choose stop/minimal-fix path, got: " + json.dumps(temporal))
+    if not temporal["forecast"].get("smallest_fastest_path", {}).get("proof_needed_after_execution"):
+        raise AssertionError("verify temporal-report should name proof needed after execution, got: " + json.dumps(temporal))
     return {"case": name, "new": payload["new_findings"], "added_edges": diff["diff"]["geometry"]["added_edges"]}
 
 

@@ -40,6 +40,8 @@ A deterministic, **advisory** checker that:
    (`summary.md`) reports from the same data.
 5. Tracks pre-change and post-change state with stable finding ids so
    "resolved / new / still open" actually means something.
+6. Names the smallest fastest path with compressed steps, skip
+   conditions, and proof needed after execution.
 
 ## What Project Microcosm Is Not
 
@@ -170,6 +172,9 @@ Beyond geometric checks, the trust layer enforces:
 - Machine-readable next actions for agent handoff.
 - Deterministic temporal reports for inspect, plan-change, and verify.
 - Basic Agent Skills and MCP config adapters.
+- Always-on compact `AGENTS.md` rules for Agent use.
+- Rule-copy drift checker for compact rule surfaces.
+- Benchmark skeleton for time-compression path decisions.
 
 ### Explicitly Not Implemented Yet
 

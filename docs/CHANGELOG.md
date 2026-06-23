@@ -20,6 +20,9 @@ with the pre-release tag conventions described below.
   Snapshot, and Forecast.
 - Temporal expert decision model centered on smallest-fastest feasible
   implementation paths.
+- Compact `AGENTS.md` rule surface for always-on Agent behavior.
+- Rule-copy drift checker for Ponytail-style compact rule consistency.
+- Time-compression benchmark skeleton with reproducible fixture cases.
 
 ### Changed
 
@@ -34,6 +37,8 @@ with the pre-release tag conventions described below.
   unpredicted new findings when no prior forecast exists.
 - `next-actions.json` now includes temporal pressure and deferred
   consequence fields.
+- `smallest_fastest_path` now explains why a path is fastest, when to
+  skip it, and what proof is required after execution.
 
 ## [0.1.0-beta.1] - 2026-06-07
 

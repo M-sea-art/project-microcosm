@@ -148,16 +148,26 @@ def smallest_fastest_path(mode, decision, risk, delta_ids):
         return _path(
             "NEEDS_STRUCTURE_PROBE",
             "No reliable fast path exists until the project exposes enough structure.",
+            "The fastest route is not execution; it is one narrow structure probe that prevents guessing.",
             [
                 "Enable a supported adapter or fixture for the target area.",
                 "Run inspect again and use that snapshot as the decision baseline.",
             ],
             common_avoid + ["Do not guess the implementation path without observable structure."],
+            [
+                "Skip implementation work while active adapters are unavailable.",
+                "Skip broad planning until the target area has observed nodes or edges.",
+            ],
+            [
+                "A later inspect run has active adapters.",
+                "The next report produces a current state with observable structure.",
+            ],
         )
     if mode == "plan-change" and new:
         return _path(
             "SPLIT_OR_REVISE_BEFORE_BUILD",
             "The fastest real path is to revise the plan now because the current plan projects new findings.",
+            "Changing the plan before coding avoids implementing a known bad future and then paying for rollback.",
             [
                 "Keep the unchanged parts of the plan.",
                 "Remove or split the action that creates projected findings: " + ", ".join(new),
@@ -165,60 +175,113 @@ def smallest_fastest_path(mode, decision, risk, delta_ids):
                 "Apply only the clean slice, then verify against this run.",
             ],
             common_avoid + ["Do not implement the full plan and discover the violation after the fact."],
+            [
+                "Skip full implementation while projected_new_findings is not empty.",
+                "Skip unrelated refactors; isolate only the action that creates the finding.",
+            ],
+            [
+                "A follow-up plan-change has no projected new findings.",
+                "A verify run proves the committed state did not inherit the projected findings.",
+            ],
         )
     if mode == "plan-change" and resolved:
         return _path(
             "APPLY_THEN_VERIFY",
             "The fastest safe path is to apply the minimal planned change because it resolves existing findings without projecting new ones.",
+            "The plan already proves value and does not forecast new structural cost.",
             [
                 "Apply the planned change exactly as rehearsed.",
                 "Run verify against this run id.",
                 "Accept the change only if resolved findings disappear and no new findings appear.",
             ],
             common_avoid,
+            [
+                "Skip additional redesign unless verify produces new findings.",
+                "Skip extra review loops when the proof is a direct resolved finding.",
+            ],
+            [
+                "Verify reports the expected resolved findings.",
+                "Verify reports no unpredicted new findings.",
+            ],
         )
     if mode == "verify" and new:
         return _path(
             "STOP_AND_MINIMAL_FIX",
             "The fastest path is a narrow fix for the new observed findings before this state becomes baseline.",
+            "Accepting a bad baseline compounds future work; a narrow fix now is cheaper than later cleanup.",
             [
                 "Do not broaden scope.",
                 "Fix only the subjects behind new findings: " + ", ".join(new),
                 "Run verify again against the same baseline.",
             ],
             common_avoid + ["Do not accept this snapshot as baseline while new findings are open."],
+            [
+                "Skip baseline promotion while new findings are open.",
+                "Skip broad cleanup until the new finding subject is fixed or accepted.",
+            ],
+            [
+                "The next verify run has no new findings against the same baseline.",
+                "The fixed subject no longer appears in unresolved findings.",
+            ],
         )
     if still_open and decision in {"WARN", "FAIL"}:
         return _path(
             "MINIMAL_FIX_OR_ACCEPT",
             "The fastest path is to either fix or explicitly accept the still-open findings before adding more work.",
+            "Adding new work on top of unresolved structural debt hides the shortest path.",
             [
                 "Review still-open findings: " + ", ".join(still_open),
                 "Choose one narrow fix or one explicit acceptance decision.",
                 "Run verify or inspect after that single decision.",
             ],
             common_avoid + ["Do not stack new execution work on top of unresolved structure debt."],
+            [
+                "Skip new feature work until the still-open findings have a fix or acceptance decision.",
+                "Skip multi-issue cleanup; handle one structural decision at a time.",
+            ],
+            [
+                "The selected finding is either gone or explicitly accepted by policy/assertion.",
+                "The next report shows fewer still-open findings or a documented acceptance.",
+            ],
         )
     if risk_level in {"high", "critical"}:
         return _path(
             "HUMAN_DECISION_GATE",
             "The shortest feasible path requires a human decision because the compressed risk is high.",
+            "A quick human approve/reject/split decision is cheaper than letting a high-risk path run automatically.",
             [
                 "Review the risk section.",
                 "Approve, reject, or split the path before execution.",
                 "Run the smallest approved slice next.",
             ],
             common_avoid,
+            [
+                "Skip autonomous execution while risk is high or critical.",
+                "Skip broad implementation until a human chooses approve, reject, or split.",
+            ],
+            [
+                "The approval decision is recorded.",
+                "The next run operates only on the approved slice.",
+            ],
         )
     return _path(
         "FAST_TRACK",
         "No structural reason blocks the short path; proceed with the smallest intended change and verify once.",
+        "No projected findings or high-risk signals justify a longer workflow.",
         [
             "Apply the smallest intended change.",
             "Run verify or inspect once after the change.",
             "Use the resulting snapshot as the next baseline.",
         ],
         common_avoid,
+        [
+            "Skip Microcosm escalation if the change remains small and findings stay empty.",
+            "Skip extra review loops unless the post-change report produces findings.",
+        ],
+        [
+            "Post-change inspect or verify reports PASS/WARN without new high-risk findings.",
+            "The resulting snapshot is available for the next decision.",
+        ],
     )
 
 
@@ -301,15 +364,18 @@ def _judgment(expert, decision, summary):
     return {"expert": expert, "decision": decision, "summary": summary}
 
 
-def _path(decision, summary, steps, avoid):
+def _path(decision, summary, why, steps, avoid, skip_conditions, proof_needed):
     return {
         "decision": decision,
         "summary": summary,
+        "why_this_is_fastest": why,
         "compressed_steps": [
             {"id": "path.step.{}".format(index), "action": step}
             for index, step in enumerate(steps, start=1)
         ],
         "avoid_cumbersome_flow": avoid,
+        "skip_conditions": skip_conditions,
+        "proof_needed_after_execution": proof_needed,
     }
 
 

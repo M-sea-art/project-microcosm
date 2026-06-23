@@ -255,8 +255,11 @@ def write_reports(project_root, run_id, mir, active_adapters, inferred=None, pro
         "projected_resolved_findings: " + (", ".join(((temporal_report.get("forecast") or {}).get("finding_delta") or {}).get("resolved", [])) or "(none)"),
         "fastest_path_decision: " + str(((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {}).get("decision")),
         "fastest_path_summary: " + str(((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {}).get("summary")),
+        "why_this_is_fastest: " + str(((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {}).get("why_this_is_fastest")),
         "compressed_steps: " + _compressed_steps_line(temporal_report),
         "avoid_cumbersome_flow: " + _avoid_line(temporal_report),
+        "skip_conditions: " + _path_list_line(temporal_report, "skip_conditions"),
+        "proof_needed_after_execution: " + _path_list_line(temporal_report, "proof_needed_after_execution"),
         "minimum_safe_next_step: " + str((temporal_report.get("forecast") or {}).get("minimum_safe_next_step")),
         "verification_points: " + "; ".join((temporal_report.get("forecast") or {}).get("verification_points", [])),
         "",
@@ -393,6 +396,11 @@ def _compressed_steps_line(temporal_report):
 def _avoid_line(temporal_report):
     path = ((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {})
     return "; ".join(path.get("avoid_cumbersome_flow", [])) or "(none)"
+
+
+def _path_list_line(temporal_report, key):
+    path = ((temporal_report.get("forecast") or {}).get("smallest_fastest_path") or {})
+    return "; ".join(path.get(key, [])) or "(none)"
 
 
 def _read_baseline_snapshot(path):
