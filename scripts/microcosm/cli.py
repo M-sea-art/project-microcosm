@@ -126,9 +126,12 @@ def cmd_compat(args):
     adapter_dir = root / "scripts" / "microcosm" / "adapters"
     checks = {
         "python": sys.version_info >= (3, 10),
+        "agents_md": (root / "AGENTS.md").is_file(),
         "skill_md": (root / "SKILL.md").is_file(),
         "scripts": (root / "scripts" / "microcosm.py").is_file(),
         "schemas": len(list((root / "schemas").glob("*.schema.json"))) >= 1,
+        "rule_drift_checker": (root / "tools" / "check_rule_copies.py").is_file(),
+        "benchmark_skeleton": (root / "benchmarks" / "fixtures" / "time-compression-cases.json").is_file(),
         "platform_adapters": all(
             (adapter_dir / name).is_file()
             for name in ("agent_skills.py", "codegraph.py", "codex.py", "hermes.py", "openclaw.py")

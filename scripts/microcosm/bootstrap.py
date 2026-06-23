@@ -56,6 +56,6 @@ def bootstrap(project_root):
         (base / "config" / "assertions.json").write_text('{"assertions": []}', encoding="utf-8")
     if not (base / "config" / "policies.json").exists():
         (base / "config" / "policies.json").write_text('{"policies": []}', encoding="utf-8")
-    report_dir = write_reports(project_root, mir["meta"]["run_id"], mir, scan["active_adapters"], scan["inferred"], scan["proposed"])
+    report_dir = write_reports(project_root, mir["meta"]["run_id"], mir, scan["active_adapters"], scan["inferred"], scan["proposed"], report_mode="bootstrap")
     (base / "mir" / "bootstrap-inferred.json").write_text(json.dumps({"inferred": scan["inferred"], "proposed": scan["proposed"]}, indent=2, ensure_ascii=False), encoding="utf-8")
     return mir, scan, report_dir

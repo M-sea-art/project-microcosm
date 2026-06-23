@@ -3,8 +3,10 @@ from copy import deepcopy
 from pathlib import Path
 from .bootstrap import build_mir
 from .config import load_change_plan, load_invariants
+from .diff import geometry_diff
 from .geometry.engine import run_invariants
-from .reporting import write_reports
+from .reporting import compute_decision, compute_risk, write_reports
+from .temporal.engine import build_plan_report
 from .versioning import MICROCOSM_VERSION, SCHEMA_VERSION, GENERATOR_VERSION
 
 
@@ -93,8 +95,22 @@ def run_plan_change(project_root, plan_path):
     mir, scan = build_mir(project_root)
     invariants = load_invariants(project_root)
     before_findings = run_invariants(mir, invariants)
+    mir["findings"] = before_findings
     projected = simulate_change(mir, plan, invariants)
     preview_diff = diff_findings(before_findings, projected["findings"])
+    projected_geometry = geometry_diff(mir, projected)
+    projected_risk = compute_risk(projected["findings"], projected_geometry)
+    projected_decision = compute_decision(projected["findings"], [], scan["active_adapters"])
+    temporal_report = build_plan_report(
+        project_root,
+        mir["meta"]["run_id"],
+        plan,
+        mir,
+        projected,
+        preview_diff,
+        projected_risk,
+        projected_decision,
+    )
     preview_summary = {
         "microcosm_version": MICROCOSM_VERSION,
         "schema_version": SCHEMA_VERSION,
@@ -113,6 +129,7 @@ def run_plan_change(project_root, plan_path):
         "findings_before": [_summarize_finding(f) for f in before_findings],
         "findings_after": [_summarize_finding(f) for f in projected["findings"]],
         "preview_diff": preview_diff,
+        "temporal_report": "temporal-report.json",
     }
     base = Path(project_root) / ".microcosm"
     report_dir = base / "reports" / mir["meta"]["run_id"]
@@ -121,6 +138,6 @@ def run_plan_change(project_root, plan_path):
     write_reports(project_root, mir["meta"]["run_id"], mir, scan["active_adapters"], scan["inferred"], scan["proposed"], base_unresolved=[
         "plan-change is a structural preview only; it does not modify project source code",
         "Runtime activity graph unavailable in V0.1",
-        "Temporal engine unavailable in V0.1",
-    ])
+        "Direct temporal scenario execution unavailable; this report is a deterministic projection",
+    ], decision_override=projected_decision, risk=projected_risk, temporal_report=temporal_report, next_action_findings=projected["findings"])
     return preview_summary, report_dir

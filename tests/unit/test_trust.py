@@ -7,6 +7,7 @@ import unittest
 from microcosm.validate import (
     stable_finding_id, compute_band, validate_mir, write_validation_report,
 )
+from microcosm.reporting import compute_next_actions
 
 
 class BandTests(unittest.TestCase):
@@ -92,6 +93,22 @@ class ValidateTests(unittest.TestCase):
         report = json.loads((td / ".microcosm" / "reports" / "r1" / "validation.json").read_text(encoding="utf-8"))
         self.assertEqual(report["run_id"], "r1")
         self.assertIn("issues", report)
+
+
+class NextActionTests(unittest.TestCase):
+    def test_routes_authority_violation_to_human_agent_decision_expert(self):
+        actions = compute_next_actions([{
+            "id": "finding.authority-violation.abc",
+            "category": "authority-violation",
+            "severity": "critical",
+            "message": "forbidden write",
+        }], [], "FAIL")
+        self.assertEqual(actions[0]["priority"], "P0")
+        self.assertEqual(actions[0]["owner_expert"], "human-agent-decision-expert")
+        self.assertEqual(actions[0]["recommended_mode"], "plan-change")
+        self.assertEqual(actions[0]["temporal_pressure"], "immediate")
+        self.assertIn("unauthorized path", actions[0]["deferred_consequence"])
+        self.assertTrue(actions[0]["requires_human_approval"])
 
 
 if __name__ == "__main__":

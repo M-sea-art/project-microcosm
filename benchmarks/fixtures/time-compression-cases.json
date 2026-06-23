@@ -1,0 +1,39 @@
+{
+  "cases": [
+    {
+      "id": "plan-introduce-forbidden-edge",
+      "fixture": "tests/fixtures/plan-introduce-violation",
+      "mode": "plan-change",
+      "expected_path_decision": "SPLIT_OR_REVISE_BEFORE_BUILD",
+      "time_compression_claim": "Avoids implementing a known forbidden write and then rolling it back."
+    },
+    {
+      "id": "plan-add-secondary-writer",
+      "fixture": "tests/fixtures/plan-add-writer",
+      "mode": "plan-change",
+      "expected_path_decision": "SPLIT_OR_REVISE_BEFORE_BUILD",
+      "time_compression_claim": "Avoids discovering persistent state writer conflict after implementation."
+    },
+    {
+      "id": "plan-recovery",
+      "fixture": "tests/fixtures/plan-recovery",
+      "mode": "plan-change",
+      "expected_path_decision": "APPLY_THEN_VERIFY",
+      "time_compression_claim": "Confirms a narrow fix can be applied and verified directly."
+    },
+    {
+      "id": "verify-regression",
+      "fixture": "tests/fixtures/verify-regression",
+      "mode": "verify",
+      "expected_path_decision": "STOP_AND_MINIMAL_FIX",
+      "time_compression_claim": "Stops a bad snapshot from becoming the next baseline."
+    },
+    {
+      "id": "trust-clean",
+      "fixture": "tests/fixtures/trust-decision-pass",
+      "mode": "inspect",
+      "expected_path_decision": "FAST_TRACK",
+      "time_compression_claim": "Avoids unnecessary review loops when no structural blocker exists."
+    }
+  ]
+}
