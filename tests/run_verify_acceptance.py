@@ -84,6 +84,15 @@ def case_regression():
     diff = json.loads(diff_path.read_text(encoding="utf-8"))
     if "edge.secondary-state" not in diff["diff"]["geometry"]["added_edges"]:
         raise AssertionError("regression stage 2 expected added_edge reported, got: " + json.dumps(diff))
+    temporal = json.loads((Path(payload["report_dir"]) / "temporal-report.json").read_text(encoding="utf-8"))
+    if temporal["mode"] != "verify":
+        raise AssertionError("verify temporal-report expected verify mode, got: " + json.dumps(temporal))
+    if not temporal.get("forecast_check", {}).get("unpredicted_new_findings"):
+        raise AssertionError("verify temporal-report should mark unpredicted new findings, got: " + json.dumps(temporal))
+    if temporal["forecast"].get("smallest_fastest_path", {}).get("decision") != "STOP_AND_MINIMAL_FIX":
+        raise AssertionError("verify temporal-report should choose stop/minimal-fix path, got: " + json.dumps(temporal))
+    if not temporal["forecast"].get("smallest_fastest_path", {}).get("proof_needed_after_execution"):
+        raise AssertionError("verify temporal-report should name proof needed after execution, got: " + json.dumps(temporal))
     return {"case": name, "new": payload["new_findings"], "added_edges": diff["diff"]["geometry"]["added_edges"]}
 
 

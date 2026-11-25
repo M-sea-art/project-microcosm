@@ -5,6 +5,41 @@ The format is loosely based on [Keep a Changelog](https://keepachangelog.com/en/
 and the project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html)
 with the pre-release tag conventions described below.
 
+## [Unreleased]
+
+### Added
+
+- Root `README.md` for GitHub and agent discoverability.
+- `docs/EXPERTS.md` with practical expert ownership areas.
+- GitHub `CODEOWNERS`, pull request template, and issue templates.
+- `next-actions.json` report output and `manifest.json.next_actions`
+  for machine-readable agent handoff.
+- Basic read-only `agent-skills` and `mcp-config` adapters.
+- `temporal-report.json` for inspect, plan-change, and verify runs.
+- Minimal deterministic temporal model: State, Event, Transition,
+  Snapshot, and Forecast.
+- Temporal expert decision model centered on smallest-fastest feasible
+  implementation paths.
+- Compact `AGENTS.md` rule surface for always-on Agent behavior.
+- Rule-copy drift checker for Ponytail-style compact rule consistency.
+- Time-compression benchmark skeleton with reproducible fixture cases.
+
+### Changed
+
+- GitHub Actions now runs `compat-check` against the repository root
+  and uploads its JSON output as a workflow artifact.
+- Project positioning now centers on compressing slow implementation
+  flows into the smallest, fastest feasible path.
+- `plan-change` now emits projected future findings, deferred
+  consequences, minimum safe next steps, smallest-fastest path, and
+  verification points.
+- `verify` now emits observed timeline transitions and marks
+  unpredicted new findings when no prior forecast exists.
+- `next-actions.json` now includes temporal pressure and deferred
+  consequence fields.
+- `smallest_fastest_path` now explains why a path is fastest, when to
+  skip it, and what proof is required after execution.
+
 ## [0.1.0-beta.1] - 2026-06-07
 
 First public beta. Project Microcosm enters GitHub as an advisory,

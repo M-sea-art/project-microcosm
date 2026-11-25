@@ -31,10 +31,12 @@ htmlcov/
 .microcosm/reports/
 .microcosm/snapshots/run-2026*.json
 .microcosm/snapshots/run-2027*.json
+.microcosm/mir/
 .microcosm/mir/current.json
 .microcosm/traces/
 .microcosm/evidence/
 tests/fixtures/**/.microcosm/reports/
+tests/fixtures/**/.microcosm/mir/
 tests/fixtures/**/.microcosm/snapshots/run-2026*.json
 tests/fixtures/**/.microcosm/snapshots/run-2027*.json
 

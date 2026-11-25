@@ -48,6 +48,21 @@ def case_introduce_violation():
     payload = json.loads(proc.stdout)
     if not any(fid.startswith("finding.authority-violation.") for fid in payload["new_preview"]):
         raise AssertionError("plan-introduce-violation expected authority-violation new, got: " + json.dumps(payload))
+    report_dir = Path(payload["report_dir"])
+    temporal = json.loads((report_dir / "temporal-report.json").read_text(encoding="utf-8"))
+    if temporal["mode"] != "plan-change":
+        raise AssertionError("temporal-report expected plan-change mode, got: " + json.dumps(temporal))
+    if not temporal["forecast"]["finding_delta"]["new"]:
+        raise AssertionError("temporal-report should expose projected new findings, got: " + json.dumps(temporal))
+    path = temporal["forecast"].get("smallest_fastest_path", {})
+    if path.get("decision") != "SPLIT_OR_REVISE_BEFORE_BUILD":
+        raise AssertionError("temporal-report should choose split/revise fast path for projected findings, got: " + json.dumps(temporal))
+    for key in ["why_this_is_fastest", "skip_conditions", "proof_needed_after_execution"]:
+        if not path.get(key):
+            raise AssertionError("temporal-report fastest path missing " + key + ": " + json.dumps(temporal))
+    summary = (report_dir / "summary.md").read_text(encoding="utf-8")
+    if "## Time compression judgment" not in summary or "fastest_path_decision" not in summary or "why_this_is_fastest" not in summary:
+        raise AssertionError("summary.md missing time compression path judgment")
     return {"case": name, "new": payload["new_preview"]}
 
 

@@ -1,11 +1,15 @@
 # Project Microcosm
 
-> **Advisory structural cognition kernel for agentic software engineering.**
+> **Temporal microcosm for the smallest fastest feasible implementation path.**
 
-Project Microcosm helps coding agents and humans understand a project
-**horizontally** (structural topology) and **vertically** (state
-evolution). It models the project as a typed, evidence-backed
-intermediate representation (MIR) and answers the questions ordinary
+Project Microcosm compresses slow implementation time: it helps humans
+and agents find the smallest, fastest feasible path before a software,
+agent, or skill project gets dragged into a cumbersome execution flow.
+It does this through structural exploration, deep decision-making,
+current state, projected future state, and a verification path. It
+models the project **horizontally** (structural topology) and
+**vertically** (state evolution) as a typed, evidence-backed
+intermediate representation (MIR), then answers the questions ordinary
 code graphs avoid:
 
 - Should this edge exist?
@@ -31,10 +35,13 @@ A deterministic, **advisory** checker that:
    policies, evidence, findings.
 3. Runs geometry invariants against the MIR and against
    `.microcosm/config/{invariants,assertions,policies}.{json,yaml}`.
-4. Emits one Finding set, then renders both machine (`findings.json`)
-   and human (`summary.md`) reports from the same data.
+4. Emits one Finding set, then renders machine (`findings.json`,
+   `next-actions.json`, `temporal-report.json`) and human
+   (`summary.md`) reports from the same data.
 5. Tracks pre-change and post-change state with stable finding ids so
    "resolved / new / still open" actually means something.
+6. Names the smallest fastest path with compressed steps, skip
+   conditions, and proof needed after execution.
 
 ## What Project Microcosm Is Not
 
@@ -78,7 +85,7 @@ python scripts/microcosm.py plan-change --project <repo> --plan change-plan.yaml
 # Post-change comparison against a baseline snapshot
 python scripts/microcosm.py verify --project <repo> --against run-xxxx
 
-# Temporal placeholder (V0.1 does not support simulation)
+# Direct Scenario DSL execution is unavailable; temporal reports come from inspect/plan-change/verify
 python scripts/microcosm.py simulate --project <repo>
 
 # Check skill/platform packaging compatibility
@@ -97,7 +104,7 @@ environment).
 | `inspect`        | Static check against accepted assertions / policies / invariants. |
 | `plan-change`    | Preview structural consequences before writing code.            |
 | `verify`         | Compare current run against a previous snapshot, prove no drift. |
-| `simulate`       | Placeholder. V0.1 returns "Temporal engine is not available."   |
+| `simulate`       | Direct Scenario DSL execution is unavailable in V0.1.           |
 | `compat-check`   | Verify skill packaging compatibility.                           |
 
 ## Output Contract
@@ -106,10 +113,12 @@ Every run writes under `<project>/.microcosm/reports/<run-id>/`:
 
 | File                  | Audience | Purpose                                |
 | --------------------- | -------- | -------------------------------------- |
-| `summary.md`          | Humans   | Decision, risk, queue, evidence summary. |
+| `summary.md`          | Humans   | Decision, temporal judgment, risk, queue, evidence summary. |
 | `findings.json`       | Agents   | Stable finding ids, category, severity, evidence_refs. |
 | `validation.json`     | Humans + Agents | MIR validator issues + schema-mismatch findings. |
 | `queue-eligibility.json` | Agents | Confirmed / probable / concern / hypothesis / schema_mismatch buckets. |
+| `next-actions.json`   | Agents   | Prioritized next actions with owner expert and recommended mode. |
+| `temporal-report.json` | Humans + Agents | Current/projected states, events, transitions, smallest fastest path, forecast, expert judgment. |
 | `unresolved.json`     | Humans   | Known unanalyzable regions.            |
 | `geometry-diff.json`  | Agents   | Pre/post node + edge + finding diff (verify only). |
 | `manifest.json`       | Both     | Decision, file list, versions.         |
@@ -160,13 +169,19 @@ Beyond geometric checks, the trust layer enforces:
 - Acceptance fixtures (capability, verify, plan-change, trust).
 - Stable finding ids and post-change diff.
 - Schema versioning with strict enums.
+- Machine-readable next actions for agent handoff.
+- Deterministic temporal reports for inspect, plan-change, and verify.
+- Basic Agent Skills and MCP config adapters.
+- Always-on compact `AGENTS.md` rules for Agent use.
+- Rule-copy drift checker for compact rule surfaces.
+- Benchmark skeleton for time-compression path decisions.
 
 ### Explicitly Not Implemented Yet
 
-- Temporal engine (`simulate` is a placeholder).
+- Direct Scenario DSL execution (`simulate` is not a scenario runner).
 - Runtime trace ingestion and E4 evidence.
-- Deep adapter coverage (Agent Skills, MCP, Codex, HMS, OpenClaw are
-  stubs).
+- Deep adapter coverage (Codex, HMS, OpenClaw, and CodeGraph are
+  stubs; Agent Skills and MCP config support is intentionally shallow).
 - CI enforcement or commit blocking.
 - Automatic repair.
 - CodeGraph deep integration.
@@ -212,6 +227,7 @@ project-microcosm/
 │   ├── README.md
 │   ├── CHANGELOG.md
 │   ├── CONTRIBUTING.md
+│   ├── EXPERTS.md
 │   └── SECURITY.md
 │
 ├── references/                  # Engineering references for the skill

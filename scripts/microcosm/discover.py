@@ -2,8 +2,17 @@ from .adapters.generic_repo import GenericRepoAdapter
 from .adapters.python_ast import PythonAstAdapter
 from .adapters.node_imports import NodeImportsAdapter
 from .adapters.fixture_edges import FixtureEdgesAdapter
+from .adapters.agent_skills import AgentSkillsAdapter
+from .adapters.mcp_config import McpConfigAdapter
 
-ADAPTERS = [GenericRepoAdapter(), FixtureEdgesAdapter(), PythonAstAdapter(), NodeImportsAdapter()]
+ADAPTERS = [
+    GenericRepoAdapter(),
+    AgentSkillsAdapter(),
+    McpConfigAdapter(),
+    FixtureEdgesAdapter(),
+    PythonAstAdapter(),
+    NodeImportsAdapter(),
+]
 
 
 def active_adapters(project_root):

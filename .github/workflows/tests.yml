@@ -40,8 +40,18 @@ jobs:
       - name: Compile
         run: python -m compileall -q scripts tests
 
+      - name: Rule copy drift check
+        run: python tools/check_rule_copies.py
+
       - name: Repository compatibility
-        run: python scripts/microcosm.py compat-check --project tests/fixtures/forbidden-edge || true
+        run: python scripts/microcosm.py compat-check --project . > compat-check.json
+
+      - name: Upload compatibility report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: compat-check-${{ matrix.os }}-py${{ matrix.python-version }}
+          path: compat-check.json
 
       - name: Build package
         run: python -m pip wheel . --no-deps --wheel-dir dist
@@ -65,6 +75,9 @@ jobs:
         env:
           PYTHONPATH: scripts
         run: python tests/run_trust_acceptance.py
+
+      - name: Benchmark smoke
+        run: python tests/run_benchmark_smoke.py
 
       - name: Unit tests
         env:

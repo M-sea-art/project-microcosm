@@ -1,0 +1,86 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "temporal-report",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "microcosm_version": {
+      "type": "string"
+    },
+    "schema_version": {
+      "type": "string"
+    },
+    "generator_version": {
+      "type": "string"
+    },
+    "run_id": {
+      "type": "string"
+    },
+    "mode": {
+      "type": "string",
+      "enum": [
+        "bootstrap",
+        "inspect",
+        "plan-change",
+        "verify"
+      ]
+    },
+    "project_root": {
+      "type": "string"
+    },
+    "purpose": {
+      "type": "string"
+    },
+    "states": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "events": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "transitions": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "forecast": {
+      "type": "object"
+    },
+    "forecast_check": {
+      "type": "object"
+    },
+    "expert_judgment": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "limits": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  },
+  "required": [
+    "microcosm_version",
+    "schema_version",
+    "generator_version",
+    "run_id",
+    "mode",
+    "project_root",
+    "purpose",
+    "states",
+    "events",
+    "transitions",
+    "forecast",
+    "expert_judgment",
+    "limits"
+  ]
+}
